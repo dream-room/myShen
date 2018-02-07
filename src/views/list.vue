@@ -24,8 +24,9 @@
             <Modal
                     v-model="modal1"
                     title="Common Modal dialog box title"
-                    @on-ok="add"
-                    @on-cancel="cancel">
+                    :loading="addLoading"
+                    @on-ok="addOk"
+                    @on-cancel="addCancel">
                 <Form :model="formItem" :label-width="80" :rules="addRuleInline">
                     <FormItem label="姓名" prop="name">
                         <Input v-model="formItem.name" placeholder="请输入姓名" />
@@ -34,7 +35,7 @@
                         <Input v-model="formItem.no" placeholder="请输入编号" />
                     </FormItem>
                     <FormItem label="密码" prop="password">
-                        <Input v-model="formItem.password" placeholder="请输入密码" />
+                        <Input v-model="formItem.password" placeholder="请输入密码" type="password" />
                     </FormItem>
                 </Form>
             </Modal>
@@ -43,6 +44,7 @@
 
 </template>
 <script>
+    import { checkNull,checkNumber }  from '../Tools/checkMethod'
     export default {
         data () {
             return {
@@ -84,7 +86,7 @@
                                     on: {
                                         click: () => {
 //                                            this.show(params.index)
-                                            this.ok(params)
+                                            this.changeOk(params)
                                         }
                                     }
                                 }, 'View'),
@@ -96,7 +98,7 @@
                                     on: {
                                         click: () => {
 //                                            this.remove(params.index)
-                                            this.cancel(params)
+                                            this.changeCancel(params)
                                         }
                                     }
                                 }, 'Delete')
@@ -112,6 +114,7 @@
                     user: '',
                     password: ''
                 },
+                addLoading: true,
                 ruleInline: {
                     user: [
                         { required: true, message: 'Please fill in the user name', trigger: 'blur' }
@@ -148,11 +151,46 @@
             getOnePage(page){
                 console.log("当前页面为："+page)
             },
-            add (data) {
-                this.$Message.info('Clicked ok');
+            changeCancel(data){
+
             },
-            cancel (data) {
-                this.$Message.info('Clicked cancel');
+            changeOk(data){
+
+            },
+            addOk () {
+                var self=this;
+                this.addLoading = false
+                this.$nextTick(() => { this.addLoading = true })
+                if(checkNull([this.formItem.name,this.formItem.no,this.formItem.password]).isNull)
+                {
+                    this.$Message.error('请填写全部数据');
+                    return;
+                }
+                /*var sendData={"name":this.formItem.name,"no":this.formItem.no,
+                    "password":this.formItem.password};
+//                 GET /someUrl
+                this.$http.post('http://localhost:8689/users',sendData,{'emulateJSON': false, 'emulateHTTP': true}).then(response => {
+                    self.modal1=false;
+                    this.$Message.success('新增成功！！');
+//                    // get body data
+//                    this.someData = response.body;
+                }, response => {
+                    // error callback
+                });*/
+                this.$http.post('http://localhost:8689/users',JSON.stringify(this.formItem)).then(response => {
+                    self.modal1=false;
+                    this.$Message.success('新增成功！！');
+//                    // get body data
+//                    this.someData = response.body;
+                }, response => {
+                    // error callback
+                });
+
+//                self.modal1=false;
+//                this.$Message.success('新增成功！！');
+            },
+            addCancel () {
+                this.$Message.info('取消新增！！');
             },
             addOne(){
                 var self= this;
