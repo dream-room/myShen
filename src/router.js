@@ -1,5 +1,12 @@
 const routers = [
     {
+        path: '/login',
+        meta: {
+            title: 'Login - 登录'
+        },
+        component: (resolve) => require(['./views/login.vue'], resolve),
+    },
+    {
         path: '/',
         meta: {
             title: ''
@@ -43,6 +50,7 @@ const routers = [
             },
 
         ]
-    }
+    },
+
 ];
 export default routers;

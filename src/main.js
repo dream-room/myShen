@@ -6,11 +6,13 @@ import Util from './libs/util';
 import App from './app.vue';
 import  VueResource  from 'vue-resource'
 import 'iview/dist/styles/iview.css';
+// import Axios from 'axios'
 
 
 Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(iView);
+// Vue.use(Axios);
 
 // 路由配置
 const RouterConfig = {
