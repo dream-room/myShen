@@ -48,6 +48,13 @@ const routers = [
                 },
                 component: (resolve) => require(['./views/orderManagement.vue'], resolve),
             },
+            {
+                path: '/authorityManagement',
+                meta: {
+                    title: '权限管理'
+                },
+                component: (resolve) => require(['./views/authorityManagement.vue'], resolve),
+            },
 
         ]
     },

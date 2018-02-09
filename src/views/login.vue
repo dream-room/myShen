@@ -4,13 +4,13 @@
     <Col span="4" offset="10">
     <div style="text-align: center;padding-top:300px">
     <Form ref="formInline" :model="formInline" :rules="ruleInline" >
-        <FormItem prop="user">
-            <Input type="text" v-model="formInline.user" placeholder="Username">
+        <FormItem prop="no">
+            <Input type="text" v-model="formInline.no" placeholder="用户名">
             <Icon type="ios-person-outline" slot="prepend"></Icon>
             </Input>
         </FormItem>
         <FormItem prop="password">
-            <Input type="password" v-model="formInline.password" placeholder="Password">
+            <Input type="password" v-model="formInline.password" placeholder="密码">
             <Icon type="ios-locked-outline" slot="prepend"></Icon>
             </Input>
         </FormItem>
@@ -27,27 +27,33 @@
         data () {
             return {
                 formInline: {
-                    user: '',
+                    no: '',
                     password: ''
                 },
                 ruleInline: {
-                    user: [
-                        { required: true, message: 'Please fill in the user name', trigger: 'blur' }
+                    no: [
+                        { required: true, message: '请输入用户名', trigger: 'blur' }
                     ],
                     password: [
-                        { required: true, message: 'Please fill in the password.', trigger: 'blur' },
-                        { type: 'string', min: 6, message: 'The password length cannot be less than 6 bits', trigger: 'blur' }
+                        { required: true, message: '请输入密码', trigger: 'blur' },
+                        { type: 'string', min: 6, message: '密码过短', trigger: 'blur' }
                     ]
                 }
             }
         },
         methods: {
             handleSubmit(name) {
+                var self=this
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        this.$Message.success('Success!');
+                        this.$http.post('http://localhost:8689/login/rest',self.formInline).then(response => {
+                            this.$router.push('pageHome');
+                        }, response => {
+                            this.$Message.error(response.body.message);
+                        });
+//                        this.$Message.success('Success!');
                     } else {
-                        this.$Message.error('Fail!');
+                        this.$Message.error('请输入正确的密码和账号!');
                     }
                 })
             }

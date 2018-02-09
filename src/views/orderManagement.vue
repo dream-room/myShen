@@ -1,15 +1,19 @@
 <template>
     <div>
-        <Form ref="formInline" :model="formInline" :rules="ruleInline" inline >
-            <FormItem>
-                <Input type="text" v-model="formInline.user" placeholder="用户名">
-                <Icon type="ios-person-outline" slot="prepend"></Icon>
+        <Form ref="formInline" :model="formInline" inline :label-width="80" >
+            <FormItem label="订单号">
+                <Input type="text" v-model="formInline.user" placeholder="">
+                </Input>
+            </FormItem>
+            <FormItem label="订单号">
+                <Input type="text" v-model="formInline.user" placeholder="">
                 </Input>
             </FormItem>
             <FormItem  style="float: right">
                 <Button type="primary" @click="addOne">新增</Button>
                 <Button type="primary" shape="circle" icon="ios-search"></Button>
             </FormItem>
+            <!--</Row>-->
         </Form>
         <div>
             <Table stripe :columns="columns1" :data="data1" ></Table>

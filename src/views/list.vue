@@ -13,7 +13,7 @@
         <Row>
             <Col span="24">
             <div  style="float: right">
-            <Button type="primary" @click="addOne">新增</Button>
+            <Button type="success" @click="addOne">新增</Button>
             <Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>
             </div>
             </Col>
@@ -73,7 +73,7 @@
                     <p>确认删除？</p>
                 </div>
                 <div slot="footer">
-                    <Button type="error" size="large" long :loading="modal_loading" @click="del">确认</Button>
+                    <Button type="error" size="large" long  @click="del">确认</Button>
                 </div>
             </Modal>
         </div>
@@ -209,6 +209,9 @@
                 self.changeData = JSON.parse(JSON.stringify(data))
                 self.changeModal=true;
                 console.log(changeData)
+            },
+            changeCancel(){
+                this.$Message.info('取消修改！！');
             },
             changeOk(){
                 var self=this;
