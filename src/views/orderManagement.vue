@@ -1,16 +1,20 @@
 <template>
     <div>
+        <Alert>订单管理</Alert>
         <Form ref="formInline" :model="formInline" inline :label-width="80" >
             <FormItem label="订单号">
-                <Input type="text" v-model="formInline.user" placeholder="">
+                <Input type="text" v-model="formInline.user" placeholder="" clearable>
                 </Input>
             </FormItem>
-            <FormItem label="订单号">
-                <Input type="text" v-model="formInline.user" placeholder="">
+            <FormItem label="订单名称">
+                <Input type="text" v-model="formInline.user" placeholder="" clearable>
                 </Input>
+            </FormItem>
+            <FormItem label="订单时间">
+                <DatePicker type="daterange" :options="options2" placement="bottom-end" placeholder="选择时间段" style="width: 200px"></DatePicker>
             </FormItem>
             <FormItem  style="float: right">
-                <Button type="primary" @click="addOne">新增</Button>
+                <Button type="success" @click="addOne">新增</Button>
                 <Button type="primary" shape="circle" icon="ios-search"></Button>
             </FormItem>
             <!--</Row>-->
@@ -66,17 +70,42 @@
                     user: '',
                     password: ''
                 },
-                ruleInline: {
-                    user: [
-                        { required: true, message: 'Please fill in the user name', trigger: 'blur' }
-                    ],
-                    password: [
-                        { required: true, message: 'Please fill in the password.', trigger: 'blur' },
-                        { type: 'string', min: 6, message: 'The password length cannot be less than 6 bits', trigger: 'blur' }
-                    ]
-                },
                 count:0,
                 currentPage:10,
+                options2: {
+                    disabledDate (date) {
+                        return date && date.valueOf() > Date.now();
+                    },
+                    shortcuts: [
+                        {
+                            text: '近一星期',
+                            value () {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                                return [start, end];
+                            }
+                        },
+                        {
+                            text: '近一个月',
+                            value () {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                                return [start, end];
+                            }
+                        },
+                        {
+                            text: '近三个月',
+                            value () {
+                                const end = new Date();
+                                const start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                                return [start, end];
+                            }
+                        }
+                    ]
+                }
             }
         },
         methods: {

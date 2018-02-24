@@ -10,6 +10,7 @@
                 <!--<Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>-->
             <!--</FormItem>-->
         <!--</Form>-->
+        <Alert>用户列表</Alert>
         <Row>
             <Col span="24">
             <div  style="float: right">
@@ -19,7 +20,8 @@
             </Col>
         </Row>
         <div>
-            <Table stripe :columns="columns1" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px"></Table>
+            <Table stripe :columns="columns1" :data="data1" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px"></Table>
+            <!--<Table stripe :columns="columns1" :data="data1" ></Table>-->
         <div style="margin: 10px">
             <div style="float: right;">
                 <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>
@@ -34,13 +36,13 @@
                     @on-ok="addOk"
                     @on-cancel="addCancel">
                 <Form :model="formItem" :label-width="80" :rules="addRuleInline">
-                    <FormItem label="姓名" prop="name">
+                    <FormItem label="姓名" >
                         <Input v-model="formItem.name" placeholder="请输入姓名" />
                     </FormItem>
-                    <FormItem label="编号" prop="no">
+                    <FormItem label="编号" >
                         <Input v-model="formItem.no" placeholder="请输入编号" />
                     </FormItem>
-                    <FormItem label="密码" prop="password">
+                    <FormItem label="密码" >
                         <Input v-model="formItem.password" placeholder="请输入密码" type="password" />
                     </FormItem>
                 </Form>
@@ -130,7 +132,6 @@
                                     },
                                     on: {
                                         click: () => {
-//
                                             this.deleteOne(params.row)
                                         }
                                     }
@@ -139,7 +140,7 @@
                         }
                     }
                 ],
-                model: [],
+                data1: [],
                 count:0,
                 current:1,
                 currentPage:10,
@@ -182,6 +183,7 @@
                 deleteData:''
             }
         },
+
         methods:{
             selectDate(){
                 var self=this
@@ -190,9 +192,9 @@
                     "size":self.currentPage
                 }
                 this.$http.get('http://localhost:8689/users',{params:postData}).then(response => {
-                    self.model=response.body.content
+                    self.data1=response.body.content
                     self.count=response.body.totalElements
-                    console.log(self.model)
+//                    console.log(self.data1)
                 }, response => {
                     // error callback
                 });

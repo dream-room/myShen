@@ -132,6 +132,7 @@
         margin: 0 auto;
         margin-right: 20px;
     }
+
 </style>
 <template>
     <div class="layout">
@@ -141,7 +142,7 @@
                     <div class="layout-logo"></div>
                     <div class="layout-nav">
                         <MenuItem name="pageHome" @click.native="route('/pageHome')" >
-                            <Icon type="ios-navigate"></Icon>
+                            <Icon type="home"></Icon>
                             首页
                         </MenuItem>
                         <MenuItem name="2">
@@ -164,33 +165,49 @@
                     <Menu active-name="1-2" theme="light" width="auto" :open-names="['1']" @on-select="routerTo">
                         <Submenu name="1">
                             <template slot="title">
-                                <Icon type="ios-navigate"></Icon>
+                                <Icon type="home"></Icon>
                                 首页
                             </template>
-                            <MenuItem name="pageHome">主页</MenuItem>
-                            <MenuItem name="personalInformation">个人资料</MenuItem>
+                            <MenuItem name="pageHome">
+                                <Icon type="home"></Icon>
+                                主页</MenuItem>
+                            <MenuItem name="personalInformation">
+                                <Icon type="person"></Icon>
+                                个人资料</MenuItem>
 
                         </Submenu>
                         <Submenu name="2">
                             <template slot="title">
-                                <Icon type="ios-keypad"></Icon>
+                                <Icon type="ios-list"></Icon>
                                 订单管理
                             </template>
-                            <MenuItem name="orderManagement">订单管理</MenuItem>
+                            <MenuItem name="orderManagement">
+                                <Icon type="ios-list"></Icon>订单管理</MenuItem>
                         </Submenu>
                         <Submenu name="3">
                             <template slot="title">
-                                <Icon type="ios-analytics"></Icon>
+                                <Icon type="ios-briefcase"></Icon>
+                                物品管理
+                            </template>
+                            <MenuItem name="itemManagement">
+                                <Icon type="ios-briefcase"></Icon>物品管理</MenuItem>
+                        </Submenu>
+                        <Submenu name="4">
+                            <template slot="title">
+                                <Icon type="person-stalker"></Icon>
                                 用户管理
                             </template>
-                            <MenuItem name="list">用户列表</MenuItem>
-                            <MenuItem name="authorityManagement">权限管理</MenuItem>
+                            <MenuItem name="list">
+                                <Icon type="ios-people"></Icon>用户列表</MenuItem>
+                            <MenuItem name="authorityManagement">
+                                <Icon type="locked"></Icon>权限管理</MenuItem>
                         </Submenu>
                     </Menu>
                 </Sider>
                 <Layout :style="{padding: '0 24px 24px'}">
                     <Breadcrumb :style="{margin: '24px 0'}" >
                         <BreadcrumbItem to="/pageHome">首页</BreadcrumbItem>
+                        <BreadcrumbItem>{{routeName}}</BreadcrumbItem>
                         <!--<BreadcrumbItem>Components</BreadcrumbItem>-->
                         <!--<BreadcrumbItem>Layout</BreadcrumbItem>-->
                     </Breadcrumb>
@@ -205,14 +222,21 @@
 </template>
 <script>
     export default {
+        data(){
+            return{
+                routeName:""
+            }
+        },
         methods:{
             routerTo(e){
                 this.$router.push(e);
+                this.routeName=this.$route.meta.title
             },
             route(e)
             {
                 this.$router.push(e);
-            }
+            },
+
 
         }
 

@@ -1,5 +1,5 @@
 <template>
-    <Alert>个人资料</Alert>
+    <Alert>物品管理</Alert>
 </template>
 <script>
     export default{

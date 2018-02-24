@@ -55,8 +55,24 @@ const routers = [
                 },
                 component: (resolve) => require(['./views/authorityManagement.vue'], resolve),
             },
+            {
+                path: '/itemManagement',
+                meta: {
+                    title: '物品管理'
+                },
+                component: (resolve) => require(['./views/itemManagement.vue'], resolve),
+            },
+
+
 
         ]
+    },
+    {
+        path: '*',
+        meta: {
+            title: 'Login - 登录'
+        },
+        component: (resolve) => require(['./views/login.vue'], resolve),
     },
 
 ];
