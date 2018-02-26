@@ -2,31 +2,29 @@
 <template>
     <div>
         <!--<Form ref="formInline" inline >-->
-            <!--<FormItem>-->
+        <!--<FormItem>-->
 
-            <!--</FormItem>-->
-            <!--<FormItem  style="float: right">-->
-                <!--<Button type="primary" @click="addOne">新增</Button>-->
-                <!--<Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>-->
-            <!--</FormItem>-->
+        <!--</FormItem>-->
+        <!--<FormItem  style="float: right">-->
+        <!--<Button type="primary" @click="addOne">新增</Button>-->
+        <!--<Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>-->
+        <!--</FormItem>-->
         <!--</Form>-->
-        <Alert>用户列表</Alert>
         <Row>
             <Col span="24">
             <div  style="float: right">
-            <Button type="success" @click="addOne">新增</Button>
-            <Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>
+                <Button type="success" @click="addOne">新增</Button>
+                <Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>
             </div>
             </Col>
         </Row>
         <div>
-            <Table stripe :columns="columns1" :data="data1" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px"></Table>
-            <!--<Table stripe :columns="columns1" :data="data1" ></Table>-->
-        <div style="margin: 10px">
-            <div style="float: right;">
-                <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>
+            <Table stripe :columns="columns1" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px"></Table>
+            <div style="margin: 10px">
+                <div style="float: right;">
+                    <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>
+                </div>
             </div>
-        </div>
         </div>
         <div>
             <Modal
@@ -36,13 +34,13 @@
                     @on-ok="addOk"
                     @on-cancel="addCancel">
                 <Form :model="formItem" :label-width="80" :rules="addRuleInline">
-                    <FormItem label="姓名" >
+                    <FormItem label="姓名" prop="name">
                         <Input v-model="formItem.name" placeholder="请输入姓名" />
                     </FormItem>
-                    <FormItem label="编号" >
+                    <FormItem label="编号" prop="no">
                         <Input v-model="formItem.no" placeholder="请输入编号" />
                     </FormItem>
-                    <FormItem label="密码" >
+                    <FormItem label="密码" prop="password">
                         <Input v-model="formItem.password" placeholder="请输入密码" type="password" />
                     </FormItem>
                 </Form>
@@ -61,7 +59,7 @@
                         <Input v-model="changeData.no" placeholder="请输入编号" />
                     </FormItem>
                     <!--<FormItem label="密码" prop="password">-->
-                        <!--<Input v-model="changeData.password" placeholder="请输入密码" type="password" />-->
+                    <!--<Input v-model="changeData.password" placeholder="请输入密码" type="password" />-->
                     <!--</FormItem>-->
                 </Form>
             </Modal>
@@ -132,6 +130,7 @@
                                     },
                                     on: {
                                         click: () => {
+//
                                             this.deleteOne(params.row)
                                         }
                                     }
@@ -140,7 +139,7 @@
                         }
                     }
                 ],
-                data1: [],
+                model: [],
                 count:0,
                 current:1,
                 currentPage:10,
@@ -183,7 +182,6 @@
                 deleteData:''
             }
         },
-
         methods:{
             selectDate(){
                 var self=this
@@ -192,9 +190,9 @@
                     "size":self.currentPage
                 }
                 this.$http.get('http://localhost:8689/users',{params:postData}).then(response => {
-                    self.data1=response.body.content
+                    self.model=response.body.content
                     self.count=response.body.totalElements
-//                    console.log(self.data1)
+                    console.log(self.model)
                 }, response => {
                     // error callback
                 });
@@ -259,7 +257,12 @@
                     this.$Message.error('请填写全部数据');
                     return;
                 }
-                this.$http.post('http://localhost:8689/users',JSON.stringify(this.formItem)).then(response => {
+                let sendData={
+                    name:self.formItem.name,
+                    no:self.formItem.no,
+                    password:self.formItem.password
+                }
+                this.$http.post('http://localhost:8689/users',sendData).then(response => {
                     self.modal1=false;
                     this.$Message.success('新增成功！！');
                     self.selectDate();
