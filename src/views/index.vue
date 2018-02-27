@@ -205,16 +205,16 @@
                     </Menu>
                 </Sider>
                 <Layout :style="{padding: '0 24px 24px'}">
-                    <Breadcrumb :style="{margin: '24px 0'}" >
-                        <BreadcrumbItem to="/pageHome">首页</BreadcrumbItem>
-                        <BreadcrumbItem>{{routeName}}</BreadcrumbItem>
-                        <!--<BreadcrumbItem>Components</BreadcrumbItem>-->
-                        <!--<BreadcrumbItem>Layout</BreadcrumbItem>-->
-                    </Breadcrumb>
+                    <!--<Breadcrumb :style="{margin: '24px 0'}" >-->
+                        <!--<BreadcrumbItem to="/pageHome">首页</BreadcrumbItem>-->
+                        <!--<BreadcrumbItem>{{routeName}}</BreadcrumbItem>-->
+                        <!--&lt;!&ndash;<BreadcrumbItem>Components</BreadcrumbItem>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<BreadcrumbItem>Layout</BreadcrumbItem>&ndash;&gt;-->
+                    <!--</Breadcrumb>-->
                     <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
                         <router-view></router-view>
                     </Content>
-                    <Footer  style="text-align: center;padding-bottom: 0px">2011-2018 &copy; Shenmq</Footer>
+                    <Footer  style="text-align: center;padding-bottom: 0px">2012-2018 &copy; Shenmq</Footer>
                 </Layout>
             </Layout>
         </Layout>
@@ -230,7 +230,7 @@
         methods:{
             routerTo(e){
                 this.$router.push(e);
-                this.routeName=this.$route.meta.title
+//                this.routeName=this.$route.meta.title
             },
             route(e)
             {
