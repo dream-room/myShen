@@ -14,6 +14,7 @@ pages:
   - npm run build
 
   # mv
+  - mkdir public
   - mv dist public/
   - mv index_prod.html public/index.html
 
