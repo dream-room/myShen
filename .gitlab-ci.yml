@@ -1,0 +1,26 @@
+image: node:8.9.1
+
+pages:
+  cache:
+    paths:
+    - node_modules/
+
+  script:
+  
+  # install dependencies
+  - npm install
+
+  # build
+  - npm run build
+
+  # mv
+  - mkdir public
+  - mv dist public/
+  - mv index_prod.html public/index.html
+
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  
