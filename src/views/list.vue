@@ -184,8 +184,8 @@
         },
         methods:{
             selectDate(){
-                var self=this
-                var postData= {
+                let self=this
+                let postData= {
                     "page": self.current-1,
                     "size":self.currentPage
                 }
@@ -214,6 +214,7 @@
                 this.$Message.info('取消修改！！');
             },
             changeOk(){
+
                 var self=this;
                 this.changeLoading = false
                 this.$nextTick(() => { this.addLoading = true })
@@ -249,14 +250,14 @@
             },
 
             addOk () {
-                var self=this;
+                let self=this;
                 this.addLoading = false
                 this.$nextTick(() => { this.addLoading = true })
-                if(checkNull([this.formItem.name,this.formItem.no,this.formItem.password]).isNull)
-                {
-                    this.$Message.error('请填写全部数据');
-                    return;
-                }
+//                if(checkNull([this.formItem.name,this.formItem.no,this.formItem.password]).isNull)
+//                {
+//                    this.$Message.error('请填写全部数据');
+//                    return;
+//                }
                 let sendData={
                     name:self.formItem.name,
                     no:self.formItem.no,

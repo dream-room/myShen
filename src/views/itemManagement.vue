@@ -3,7 +3,7 @@
         <Alert>物品管理</Alert>
         <Form ref="formInline" :model="formInline" inline :label-width="80" >
             <FormItem label="物品名称">
-                <Input type="text" v-model="formInline.name" placeholder="" clearable>
+                <Input type="text" v-model="formInline.name" placeholder="" clearable disabled>
                 </Input>
             </FormItem>
             <!--<FormItem label="订单名称">-->
