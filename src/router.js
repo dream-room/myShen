@@ -62,8 +62,13 @@ const routers = [
                 },
                 component: (resolve) => require(['./views/itemManagement.vue'], resolve),
             },
-
-
+            {
+                path: '/componentsManagement',
+                meta: {
+                    title: '零件管理'
+                },
+                component: (resolve) => require(['./views/componentsManagement.vue'], resolve),
+            },
 
         ]
     },

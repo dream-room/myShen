@@ -236,7 +236,6 @@
                 self.deleteData = JSON.parse(JSON.stringify(data.id))
                 self.deleteModel=true
             },
-
             del(){
                 var self=this
                 this.$http.delete('http://localhost:8689/users/'+ this.deleteData)

@@ -137,7 +137,7 @@
 <template>
     <div class="layout">
         <Layout  style="min-height: 100vh">
-            <Header>
+            <Header :style="{position: 'fixed', width: '100vw', top: 0, overflow: 'auto'}" style="z-index: 100">
                 <Menu mode="horizontal" theme="dark" active-name="1" >
                     <div class="layout-logo"></div>
                     <div class="layout-nav">
@@ -161,9 +161,9 @@
                 </Menu>
             </Header>
             <Layout>
-                <Sider hide-trigger :style="{background: '#fff'}">
-                    <Menu active-name="1-2" theme="light" width="auto" :open-names="['1']" @on-select="routerTo">
-                        <Submenu name="1">
+                <Sider hide-trigger  :style="{position: 'fixed', height: '100vh', left: 0, overflow: 'auto',background: '#fff'}" style="top: 60px;">
+                    <Menu active-name="1-2" theme="light" width="auto" :open-names="['1']" @on-select="routerTo"  accordion>
+                        <Submenu name="1" >
                             <template slot="title">
                                 <Icon type="home"></Icon>
                                 首页
@@ -176,7 +176,7 @@
                                 个人资料</MenuItem>
 
                         </Submenu>
-                        <Submenu name="2">
+                        <Submenu name="2" >
                             <template slot="title">
                                 <Icon type="ios-list"></Icon>
                                 订单管理
@@ -191,6 +191,8 @@
                             </template>
                             <MenuItem name="itemManagement">
                                 <Icon type="ios-briefcase"></Icon>物品管理</MenuItem>
+                            <MenuItem name="componentsManagement">
+                                <Icon type="ios-briefcase"></Icon>零件管理</MenuItem>
                         </Submenu>
                         <Submenu name="4">
                             <template slot="title">
@@ -204,13 +206,13 @@
                         </Submenu>
                     </Menu>
                 </Sider>
-                <Layout :style="{padding: '0 24px 24px'}">
-                    <!--<Breadcrumb :style="{margin: '24px 0'}" >-->
-                        <!--<BreadcrumbItem to="/pageHome">首页</BreadcrumbItem>-->
-                        <!--<BreadcrumbItem>{{routeName}}</BreadcrumbItem>-->
-                        <!--&lt;!&ndash;<BreadcrumbItem>Components</BreadcrumbItem>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<BreadcrumbItem>Layout</BreadcrumbItem>&ndash;&gt;-->
-                    <!--</Breadcrumb>-->
+                <Layout :style="{padding: '0 24px 24px',marginLeft: '200px'}" >
+                    <Breadcrumb :style="{margin: '24px 0'}" >
+                        <BreadcrumbItem >首页</BreadcrumbItem>
+                        <BreadcrumbItem>{{oneName}}</BreadcrumbItem>
+                        <!--<BreadcrumbItem>Components</BreadcrumbItem>-->
+                        <!--<BreadcrumbItem>Layout</BreadcrumbItem>-->
+                    </Breadcrumb>
                     <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">
                         <router-view></router-view>
                     </Content>
@@ -224,20 +226,19 @@
     export default {
         data(){
             return{
-                routeName:""
+                oneName:""
             }
         },
         methods:{
             routerTo(e){
                 this.$router.push(e);
-//                this.routeName=this.$route.meta.title
+                this.oneName=this.routeName
             },
             route(e)
             {
                 this.$router.push(e);
+                this.oneName=this.routeName
             },
-
-
         }
 
     }

@@ -1,7 +1,7 @@
 <template>
     <div>
         <Alert>物品管理</Alert>
-        <Form ref="formInline" :model="formInline" inline :label-width="80" >
+        <Form  :model="formInline" inline :label-width="80" >
             <FormItem label="物品名称">
                 <Input type="text" v-model="formInline.name" placeholder="" clearable disabled>
                 </Input>
@@ -62,6 +62,40 @@
                         title: 'Date',
                         key: 'date',
                         align:'center'
+                    },
+                    {
+                        title: '操作',
+                        key: 'action',
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.changeOne(params.row)
+                                        }
+                                    }
+                                }, '修改'),
+                                h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.deleteOne(params.row)
+                                        }
+                                    }
+                                }, '禁用')
+                            ]);
+                        }
                     }
                 ],
 
