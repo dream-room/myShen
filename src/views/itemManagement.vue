@@ -1,33 +1,105 @@
 <template>
     <div>
         <Alert>物品管理</Alert>
-        <Form  :model="formInline" inline :label-width="80" >
-            <FormItem label="物品名称">
-                <Input type="text" v-model="formInline.name" placeholder="" clearable disabled>
-                </Input>
-            </FormItem>
-            <!--<FormItem label="订单名称">-->
-                <!--<Input type="text" v-model="formInline.user" placeholder="" clearable>-->
-                <!--</Input>-->
-            <!--</FormItem>-->
-            <!--<FormItem label="订单时间">-->
-                <!--<DatePicker type="daterange" :options="options2" placement="bottom-end" placeholder="选择时间段" style="width: 200px"></DatePicker>-->
-            <!--</FormItem>-->
-            <FormItem  style="float: right">
-                <Button type="success" @click="addOne">新增</Button>
-                <Button type="primary" shape="circle" icon="ios-search"></Button>
-            </FormItem>
-            <!--</Row>-->
-        </Form>
         <div>
-            <Table stripe :columns="columns1" :data="data1" ></Table>
+            <Form  :model="formInline" inline :label-width="40" >
+                <FormItem  >
+                    <label style="font-size: 20px;vertical-align: middle">物品名称：</label>
+                    <Input type="text" v-model="formInline.name" placeholder="" clearable style="width: 200px" >
+                    </Input>
+                </FormItem>
+                <FormItem  style="float: right">
+                    <Button type="success" @click="addOne" size="large">新增</Button>
+                    <Button type="primary" @click="selectData" size="large">搜索</Button>
+                </FormItem>
+                <!--</Row>-->
+            </Form>
+        </div>
+        <div>
+            <Table  :columns="searcherColumns" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top:3px" size="large"></Table>
             <div style="margin: 10px">
                 <div style="float: right;">
-                    <Page :total="count" show-elevator @on-change="getOnePage" :current="1" show-total :page-size="currentPage"></Page>
+                    <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>
                 </div>
             </div>
         </div>
-
+        <div>
+            <!--//添加-->
+            <Modal
+                    v-model="showAddModel"
+                    width="800"
+                    title="新增物品">
+                <Form  ref="addModel" :model="addModel" :label-width="80" :rules="addRuleInline" >
+                    <Row>
+                        <Col span="12">
+                    <FormItem label="姓名" prop="name">
+                        <Input v-model="addModel.name" placeholder="请输入姓名" />
+                    </FormItem>
+                        </Col>
+                        <Col span="12">
+                    <FormItem label="状态" prop="status">
+                        <Select v-model="addModel.status">
+                            <Option value="1">正常</Option>
+                            <Option value="2">禁用</Option>
+                        </Select>
+                    </FormItem>
+                        </Col>
+                    </Row>
+                    <FormItem label="零件">
+                        <Select v-model="addModel.goodsComponents" filterable multiple>
+                            <Option v-for="item in componentsList" :value="item.value" >{{ item.name }}</Option>
+                        </Select>
+                    </FormItem>
+                </Form>
+                <div slot="footer">
+                    <Button type="primary" @click="add()" size="large">新增</Button>
+                </div>
+            </Modal>
+            <!--修改-->
+            <Modal
+                    v-model="showChangeModel"
+                    title="修改物品">
+                <Form  ref="changeModel" :model="changeModel" :label-width="80" :rules="addRuleInline" >
+                    <Row>
+                        <Col span="12">
+                        <FormItem label="姓名" prop="name">
+                            <Input v-model="changeModel.name" placeholder="请输入姓名" />
+                        </FormItem>
+                        </Col>
+                        <Col span="12">
+                        <FormItem label="状态" prop="status">
+                            <Select v-model="changeModel.status">
+                                <Option value="1">正常</Option>
+                                <Option value="2">禁用</Option>
+                            </Select>
+                        </FormItem>
+                        </Col>
+                    </Row>
+                    <FormItem label="零件" >
+                        <Select v-model="changeModel.goodsComponents" filterable multiple>
+                            <Option v-for="item in componentsList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                        </Select>
+                    </FormItem>
+                </Form>
+                <div slot="footer">
+                    <Button type="primary" @click="change()" size="large">修改</Button>
+                </div>
+            </Modal>
+            <!--删除-->
+            <Modal v-model="showDeleteModel" width="360">
+                <p slot="header" style="color:#f60;text-align:center">
+                    <Icon type="information-circled"></Icon>
+                    <span>删除</span>
+                </p>
+                <div style="text-align:center">
+                    <h2>删除后可能对系统造成不可预计的影响</h2>
+                    <h2>确认删除？</h2>
+                </div>
+                <div slot="footer">
+                    <Button type="error" size="large" long  @click="del">确认</Button>
+                </div>
+            </Modal>
+        </div>
     </div>
 
 
@@ -36,7 +108,27 @@
     export default{
         data(){
             return{
-                columns1: [
+                formInline: {
+                    name: ""
+                },
+                allStatus:{"1":"正常","2":"禁用"},
+                componentsList:[],
+                count:0,//总数
+                current: 1,//页码
+                currentPage:10,//每页显示的数量
+                model:[],
+                searcherColumns:[
+//                    {
+//                        type: 'expand',
+//                        width: 50,
+//                        render: (h, params) => {
+//                            return h(123, {
+//                                props: {
+//                                    row: params.row
+//                                }
+//                            })
+//                        }
+//                    },
                     {
                         title: '序号',
                         type: 'index',
@@ -49,18 +141,13 @@
                         align:'center'
                     },
                     {
-                        title: '规格',
-                        key: 'age',
+                        title: '状态',
+                        key: 'status',
                         align:'center'
                     },
                     {
-                        title: 'Address',
-                        key: 'address',
-                        align:'center'
-                    },
-                    {
-                        title: 'Date',
-                        key: 'date',
+                        title: '修改时间',
+                        key: 'updateTime',
                         align:'center'
                     },
                     {
@@ -71,8 +158,8 @@
                             return h('div', [
                                 h('Button', {
                                     props: {
-                                        type: 'primary',
-                                        size: 'small'
+                                        type: 'warning',
+                                        size: 'default'
                                     },
                                     style: {
                                         marginRight: '5px'
@@ -80,28 +167,159 @@
                                     on: {
                                         click: () => {
                                             this.changeOne(params.row)
+                                            console.log(params.row)
                                         }
                                     }
                                 }, '修改'),
                                 h('Button', {
                                     props: {
                                         type: 'error',
-                                        size: 'small'
+                                        size: 'default',
                                     },
                                     on: {
                                         click: () => {
                                             this.deleteOne(params.row)
                                         }
                                     }
-                                }, '禁用')
+                                }, '删除')
                             ]);
                         }
                     }
                 ],
+                showAddModel:false,
+                addModel:{
+                    name:'',
+                    status:'',
+                    goodsComponents:[]
+                },
+                addRuleInline:{
+                    name: [
+                        { required: true, message: '名称不能为空', trigger: 'blur' }
+                    ],
+                    status: [
+                        { required: true, message: '请选择状态', trigger: 'blur' }
+                    ],
+                    goodsComponents: [
+                        { required: true, message: '零件不能为空', trigger: 'blur' }
+                    ],
+                },
+                showChangeModel:false,
+                changeModel:{
+                    name:'',
+                    num:'',
+                    price:''
+                },
+                showDeleteModel:false,
+                deleteModel:''
 
             }
         },
+        mounted () {
+
+        },
         methods:{
+            //获取零件列表
+            getAllComponents(){
+                let self = this
+                this.$http.get('http://localhost:8689/components/all').then(response => {
+                    self.componentsList=response.body
+                }, response => {
+                    // error callback
+                });
+            },
+            //搜索
+            selectData(){
+                let self=this
+                let postData= {
+                    "page": self.current-1,
+                    "size":self.currentPage
+                }
+                this.$http.get('http://localhost:8689/goods',{params:postData}).then(response => {
+                    self.model=response.body.content
+                    self.count=response.body.totalElements
+                    console.log(self.model)
+                }, response => {
+                    // error callback
+                });
+
+            },
+            getOnePage(page){
+                let self=this;
+                self.current=page;
+                self.selectData()
+            },
+            //新增
+            addOne(){
+                this.$refs['addModel'].resetFields();
+                this.addModel=[];
+                this.getAllComponents();
+                this.showAddModel=true;
+            },
+            add(){
+                let self=this;
+                this.$refs['addModel'].validate((valid) => {
+                    if (valid) {
+                        let sendData={
+                            name:self.addModel.name,
+                            status:self.addModel.status,
+                            goodsComponents:self.addModel.goodsComponents
+                        }
+                        self.$http.post('http://localhost:8689/goods',sendData).then(response => {
+                            self.showAddModel=false;
+                            self.$Message.success('新增成功！！');
+                            self.selectData();
+                        }, response => {
+                            // error callback
+                        });
+                    } else {
+                        this.$Message.error('请按照要求填写数据!');
+                    }
+                })
+            },
+            //修改
+            changeOne(data){
+                var self=this
+                this.$refs['changeModel'].resetFields();
+                self.changeModel = JSON.parse(JSON.stringify(data))
+                self.changeModel.status=data.status.toString()
+//                self.changeModel.price=data.price.toString()
+                self.showChangeModel=true;
+            },
+            change(){
+                let self=this;
+                this.$refs['changeModel'].validate((valid) => {
+                    if (valid) {
+                        self.$http.post('http://localhost:8689/goods',self.changeModel).then(response => {
+                            self.showChangeModel=false;
+                            self.$Message.success('修改成功！！');
+                            self.selectData();
+                        }, response => {
+                            // error callback
+                        });
+                    } else {
+                        this.$Message.error('请按照要求填写数据!');
+                    }
+                })
+
+            },
+            //删除
+            deleteOne(data){
+                var self= this
+                self.deleteModel = JSON.parse(JSON.stringify(data.id))
+                self.showDeleteModel=true
+            },
+            del(){
+                var self=this
+                this.$http.delete('http://localhost:8689/goods/'+ this.deleteModel)
+                    .then(response => {
+                        self.showDeleteModel=false
+                        this.$Message.success('删除成功！！');
+                        self.selectData();
+                    }, response => {
+                        // error callback
+                        this.$Message.warning(response.body.message);
+                    });
+            },
 
         }
 

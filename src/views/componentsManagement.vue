@@ -2,8 +2,9 @@
     <div>
         <Alert>零件管理</Alert>
         <div>
-            <Form  :model="formInline" inline :label-width="80" >
-                <FormItem label="物品名称" >
+            <Form  :model="formInline" inline :label-width="40" >
+                <FormItem >
+                    <label style="font-size: 20px;vertical-align: middle">物品名称：</label>
                     <Input type="text" v-model="formInline.name" placeholder="" clearable style="width: 200px">
                     </Input>
                 </FormItem>
@@ -15,7 +16,7 @@
             </Form>
         </div>
         <div>
-            <Table stripe :columns="searcherColumns" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px" size="large"></Table>
+            <Table stripe :columns="searcherColumns" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 3px" size="large"></Table>
             <div style="margin: 10px">
                 <div style="float: right;">
                     <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>

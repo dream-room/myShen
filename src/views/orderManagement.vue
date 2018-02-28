@@ -1,122 +1,98 @@
 <template>
     <div>
         <Alert>订单管理</Alert>
-        <Form ref="formInline" :model="formInline" inline :label-width="80"  >
-            <FormItem label="订单号">
-                <Input type="text" v-model="formInline.user" placeholder="" clearable>
-                </Input>
-            </FormItem>
-            </Col>
-            <FormItem label="订单名称">
-                <Input type="text" v-model="formInline.user" placeholder="" clearable>
-                </Input>
-            </FormItem>
-
-            <FormItem label="订单时间">
-                <DatePicker type="daterange" :options="options2" placement="bottom-end" placeholder="选择时间段" style="width: 200px"></DatePicker>
-            </FormItem>
-
-            <FormItem  style="float: right">
-                <Button type="success" @click="addOne">新增</Button>
-                <Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>
-            </FormItem>
-            <!--</Row>-->
-        </Form>
         <div>
-            <Table stripe :columns="columns1" :data="data1" border no-data-text="点击搜索查看数据吧！"></Table>
+            <Form  :model="formInline" inline :label-width="80" >
+                <FormItem label="物品名称" >
+                    <Input type="text" v-model="formInline.name" placeholder="" clearable style="width: 200px">
+                    </Input>
+                </FormItem>
+                <FormItem  style="float: right">
+                    <Button type="success" @click="addOne" size="large">新增</Button>
+                    <Button type="primary" @click="selectData" size="large">搜索</Button>
+                </FormItem>
+                <!--</Row>-->
+            </Form>
+        </div>
+        <div>
+            <Table stripe :columns="searcherColumns" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px" size="large"></Table>
             <div style="margin: 10px">
                 <div style="float: right;">
-                    <Page :total="count" show-elevator @on-change="getOnePage" :current="1" show-total :page-size="currentPage"></Page>
+                    <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>
                 </div>
             </div>
         </div>
         <div>
-        <Modal
-                v-model="modal6"
-                title="新增订单"
-                :loading="loading"
-                :mask-closable="false"
-                width="800">
-            <Form ref="addModel" :model="addModel"  :rules="ruleValidate">
-                <!--<FormItem label="Name" prop="name">-->
-                    <!--<Input v-model="addModel.name" placeholder="Enter your name"></Input>-->
-                <!--</FormItem>-->
-                <!--<FormItem label="E-mail" prop="mail">-->
-                    <!--<Input v-model="addModel.mail" placeholder="Enter your e-mail"></Input>-->
-                <!--</FormItem>-->
-                <!--<FormItem label="City" prop="city">-->
-                    <!--<Select v-model="addModel.city" placeholder="Select your city">-->
-                        <!--<Option value="beijing">New York</Option>-->
-                        <!--<Option value="shanghai">London</Option>-->
-                        <!--<Option value="shenzhen">Sydney</Option>-->
-                    <!--</Select>-->
-                <!--</FormItem>-->
-                <!--<FormItem label="Date">-->
-                    <!--<Row>-->
-                        <!--<Col span="10">-->
-                        <!--<FormItem prop="date">-->
-                            <!--<DatePicker type="date" placeholder="Select date" v-model="addModel.date"></DatePicker>-->
-                        <!--</FormItem>-->
-                        <!--</Col>-->
-                        <!--<Col span="4" style="text-align: center">-</Col>-->
-                        <!--<Col span="10">-->
-                        <!--<FormItem prop="time">-->
-                            <!--<TimePicker type="time" placeholder="Select time" v-model="addModel.time"></TimePicker>-->
-                        <!--</FormItem>-->
-                        <!--</Col>-->
-                    <!--</Row>-->
-                <!--</FormItem>-->
-                <!--<FormItem label="Gender" prop="gender">-->
-                    <!--<RadioGroup v-model="addModel.gender">-->
-                        <!--<Radio label="male">Male</Radio>-->
-                        <!--<Radio label="female">Female</Radio>-->
-                    <!--</RadioGroup>-->
-                <!--</FormItem>-->
-                <!--<FormItem label="Hobby" prop="interest">-->
-                    <!--<CheckboxGroup v-model="addModel.interest">-->
-                        <!--<Checkbox label="Eat"></Checkbox>-->
-                        <!--<Checkbox label="Sleep"></Checkbox>-->
-                        <!--<Checkbox label="Run"></Checkbox>-->
-                        <!--<Checkbox label="Movie"></Checkbox>-->
-                    <!--</CheckboxGroup>-->
-                <!--</FormItem>-->
-                <!--<FormItem label="Desc" prop="desc">-->
-                    <!--<Input v-model="addModel.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..."></Input>-->
-                <!--</FormItem>-->
-                <div>
-                <div>
-                    <label>12312312</label>
-                    <p>12312312</p>
+            <!--//添加-->
+            <Modal
+                    v-model="showAddModel"
+
+                    title="新增用户">
+                <Form  ref="addModel" :model="addModel" :label-width="80" :rules="addRuleInline" >
+                    <FormItem label="姓名" prop="name">
+                        <Input v-model="addModel.name" placeholder="请输入姓名" />
+                    </FormItem>
+                    <FormItem label="通常价" prop="price">
+                        <Input v-model="addModel.price" placeholder="请输入价格" />
+                    </FormItem>
+                    <FormItem label="库存" prop="num">
+                        <Input v-model="addModel.num" placeholder="请输入库存"  />
+                    </FormItem>
+                </Form>
+                <div slot="footer">
+                    <Button type="primary" @click="add()" size="large">新增</Button>
                 </div>
-                <p style="float: right">3213213</p>
+            </Modal>
+            <!--修改-->
+            <Modal
+                    v-model="showChangeModel"
+                    title="修改用户">
+                <Form  ref="changeModel" :model="changeModel" :label-width="80" :rules="addRuleInline" >
+                    <FormItem label="姓名" prop="name">
+                        <Input v-model="changeModel.name" placeholder="请输入姓名" />
+                    </FormItem>
+                    <FormItem label="通常价" prop="price">
+                        <Input v-model="changeModel.price" placeholder="请输入价格" />
+                    </FormItem>
+                    <FormItem label="库存" prop="num">
+                        <Input v-model="changeModel.num" placeholder="请输入库存"  />
+                    </FormItem>
+                </Form>
+                <div slot="footer">
+                    <Button type="primary" @click="change()" size="large">修改</Button>
                 </div>
-            </Form>
-            <div slot="footer">
-                <Button type="primary" @click="add('addModel')">新增</Button>
-                <Button type="ghost" style="margin-left: 8px" @click="addCancel()">取消</Button>
-            </div>
-        </Modal>
+            </Modal>
+            <!--删除-->
+            <Modal v-model="showDeleteModel" width="360">
+                <p slot="header" style="color:#f60;text-align:center">
+                    <Icon type="information-circled"></Icon>
+                    <span>删除</span>
+                </p>
+                <div style="text-align:center">
+                    <h2>删除后可能对系统造成不可预计的影响</h2>
+                    <h2>确认删除？</h2>
+                </div>
+                <div slot="footer">
+                    <Button type="error" size="large" long  @click="del">确认</Button>
+                </div>
+            </Modal>
         </div>
     </div>
 
 
-
 </template>
 <script>
-    export default {
+    export default{
         data(){
             return{
-                addModel: {
-                    name: '',
-                    mail: '',
-                    city: '',
-                    gender: '',
-                    interest: [],
-                    date: '',
-                    time: '',
-                    desc: ''
+                formInline: {
+                    name: ""
                 },
-                columns1: [
+                count:0,//总数
+                current: 1,//页码
+                currentPage:10,//每页显示的数量
+                model:[],
+                searcherColumns:[
                     {
                         title: '序号',
                         type: 'index',
@@ -124,108 +100,98 @@
                         width:"70px"
                     },
                     {
-                        title: '名称',
+                        title: '零件名称',
                         key: 'name',
                         align:'center'
                     },
                     {
-                        title: 'Age',
-                        key: 'age',
+                        title: '库存',
+                        key: 'num',
                         align:'center'
                     },
                     {
-                        title: 'Address',
-                        key: 'address',
+                        title: '通常价',
+                        key: 'price',
                         align:'center'
                     },
                     {
-                        title: 'Date',
-                        key: 'date',
+                        title: '修改时间',
+                        key: 'updateTime',
                         align:'center'
+                    },
+                    {
+                        title: '操作',
+                        key: 'action',
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'warning',
+                                        size: 'default'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.changeOne(params.row)
+                                            console.log(params.row)
+                                        }
+                                    }
+                                }, '修改'),
+                                h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'default',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.deleteOne(params.row)
+                                        }
+                                    }
+                                }, '删除')
+                            ]);
+                        }
                     }
                 ],
-                data1: [],
-                formInline: {
-                    user: '123',
-                    password: ''
+                showAddModel:false,
+                addModel:{
+                    name:'',
+                    num:'',
+                    price:''
                 },
-                count:0,
-                currentPage:10,
-                options2: {
-                    disabledDate (date) {
-                        return date && date.valueOf() > Date.now();
-                    },
-                    shortcuts: [
-                        {
-                            text: '近一星期',
-                            value () {
-                                const end = new Date();
-                                const start = new Date();
-                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                                return [start, end];
-                            }
-                        },
-                        {
-                            text: '近一个月',
-                            value () {
-                                const end = new Date();
-                                const start = new Date();
-                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                                return [start, end];
-                            }
-                        },
-                        {
-                            text: '近三个月',
-                            value () {
-                                const end = new Date();
-                                const start = new Date();
-                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                                return [start, end];
-                            }
-                        }
-                    ]
-                },
-                modal6: false,
-                loading: true,
-                ruleValidate: {
+                addRuleInline:{
                     name: [
-                        { required: true, message: 'The name cannot be empty', trigger: 'blur' }
+                        { required: true, message: '名称不能为空', trigger: 'blur' }
                     ],
-                    mail: [
-                        { required: true, message: 'Mailbox cannot be empty', trigger: 'blur' },
-                        { type: 'email', message: 'Incorrect email format', trigger: 'blur' }
+                    num: [
+                        { required: true, message: '数量不能为空', trigger: 'blur' }
                     ],
-                    city: [
-                        { required: true, message: 'Please select the city', trigger: 'change' }
+                    price: [
+                        { required: true, message: '价格不能为空', trigger: 'blur' }
                     ],
-                    gender: [
-                        { required: true, message: 'Please select gender', trigger: 'change' }
-                    ],
-                    interest: [
-                        { required: true, type: 'array', min: 1, message: 'Choose at least one hobby', trigger: 'change' },
-                        { type: 'array', max: 2, message: 'Choose two hobbies at best', trigger: 'change' }
-                    ],
-                    date: [
-                        { required: true, type: 'date', message: 'Please select the date', trigger: 'change' }
-                    ],
-                    time: [
-                        { required: true, type: 'date', message: 'Please select time', trigger: 'change' }
-                    ],
-                    desc: [
-                        { required: true, message: 'Please enter a personal introduction', trigger: 'blur' },
-                        { type: 'string', min: 20, message: 'Introduce no less than 20 words', trigger: 'blur' }
-                    ]
-                }
+                },
+                showChangeModel:false,
+                changeModel:{
+                    name:'',
+                    num:'',
+                    price:''
+                },
+                showDeleteModel:false,
+                deleteModel:''
+
             }
         },
-        methods: {
-            selectDate(){
+        methods:{
+            //搜索
+            selectData(){
                 let self=this
                 let postData= {
                     "page": self.current-1,
                     "size":self.currentPage
                 }
-                this.$http.get('http://localhost:8689/',{params:postData}).then(response => {
+                this.$http.get('http://localhost:8689/components',{params:postData}).then(response => {
                     self.model=response.body.content
                     self.count=response.body.totalElements
                     console.log(self.model)
@@ -235,35 +201,82 @@
 
             },
             getOnePage(page){
-                console.log(page)
+                let self=this;
+                self.current=page;
+                self.selectData()
             },
+            //新增
             addOne(){
                 this.$refs['addModel'].resetFields();
-                let self =this;
-                self.addModel=[];
-                self.modal6=true;
+                this.addModel=[];
+                this.showAddModel=true;
             },
-            add(name){
-                this.$refs[name].validate((valid) => {
+            add(){
+                let self=this;
+                this.$refs['addModel'].validate((valid) => {
                     if (valid) {
-                        this.$Message.success('Success!');
+                        let sendData={
+                            name:self.addModel.name,
+                            num:self.addModel.num,
+                            price:self.addModel.price
+                        }
+                        self.$http.post('http://localhost:8689/components',sendData).then(response => {
+                            self.showAddModel=false;
+                            self.$Message.success('新增成功！！');
+                            self.selectData();
+                        }, response => {
+                            // error callback
+                        });
                     } else {
-                        this.$Message.error('Fail!');
+                        this.$Message.error('请按照要求填写数据!');
                     }
                 })
-//                let self=this;
-//                this.$http.post('http://localhost:8689/users',JSON.stringify(self.addModel)).then(response => {
-//                    self.changeModal=false;
-//                    this.$Message.success('修改成功！！');
-//                    self.selectDate();
-//                }, response => {
-//                    // error callback
-//                });
+            },
+            //修改
+            changeOne(data){
+                var self=this
+                this.$refs['changeModel'].resetFields();
+                self.changeModel = JSON.parse(JSON.stringify(data))
+                self.changeModel.num=data.num.toString()
+                self.changeModel.price=data.price.toString()
+                self.showChangeModel=true;
+            },
+            change(){
+                let self=this;
+                this.$refs['changeModel'].validate((valid) => {
+                    if (valid) {
+                        self.$http.post('http://localhost:8689/components',self.changeModel).then(response => {
+                            self.showChangeModel=false;
+                            self.$Message.success('修改成功！！');
+                            self.selectData();
+                        }, response => {
+                            // error callback
+                        });
+                    } else {
+                        this.$Message.error('请按照要求填写数据!');
+                    }
+                })
 
             },
-            addCancel(){
-                this.modal6=false;
-            }
+            //删除
+            deleteOne(data){
+                var self= this
+                self.deleteModel = JSON.parse(JSON.stringify(data.id))
+                self.showDeleteModel=true
+            },
+            del(){
+                var self=this
+                this.$http.delete('http://localhost:8689/components/'+ this.deleteModel)
+                    .then(response => {
+                        self.showDeleteModel=false
+                        this.$Message.success('删除成功！！');
+                        self.selectData();
+                    }, response => {
+                        // error callback
+                        this.$Message.warning(response.body.message);
+                    });
+            },
+
         }
 
     }
