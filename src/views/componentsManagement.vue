@@ -4,7 +4,7 @@
         <div>
             <Form  :model="formInline" inline :label-width="40" >
                 <FormItem >
-                    <label style="font-size: 20px;vertical-align: middle">物品名称：</label>
+                    <label style="font-size: 20px;vertical-align: middle">零件名称：</label>
                     <Input type="text" v-model="formInline.name" placeholder="" clearable style="width: 200px">
                     </Input>
                 </FormItem>
@@ -27,11 +27,11 @@
             <!--//添加-->
             <Modal
                     v-model="showAddModel"
-
-                    title="新增用户">
+                    :mask-closable="false"
+                    title="新增零件">
                 <Form  ref="addModel" :model="addModel" :label-width="80" :rules="addRuleInline" >
-                    <FormItem label="姓名" prop="name">
-                        <Input v-model="addModel.name" placeholder="请输入姓名" />
+                    <FormItem label="名称" prop="name">
+                        <Input v-model="addModel.name" placeholder="请输入名称" />
                     </FormItem>
                     <FormItem label="通常价" prop="price">
                         <Input v-model="addModel.price" placeholder="请输入价格" />
@@ -47,10 +47,11 @@
             <!--修改-->
             <Modal
                     v-model="showChangeModel"
-                    title="修改用户">
+                    :mask-closable="false"
+                    title="修改零件">
                 <Form  ref="changeModel" :model="changeModel" :label-width="80" :rules="addRuleInline" >
-                    <FormItem label="姓名" prop="name">
-                        <Input v-model="changeModel.name" placeholder="请输入姓名" />
+                    <FormItem label="名称" prop="name">
+                        <Input v-model="changeModel.name" placeholder="请输入名称" />
                     </FormItem>
                     <FormItem label="通常价" prop="price">
                         <Input v-model="changeModel.price" placeholder="请输入价格" />

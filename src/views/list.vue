@@ -13,13 +13,13 @@
         <Row>
             <Col span="24">
             <div  style="float: right">
-                <Button type="success" @click="addOne">新增</Button>
-                <Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>
+                <Button type="success" @click="addOne" size="large">新增</Button>
+                <Button type="primary" shape="circle" icon="ios-search" @click="selectDate" size="large"></Button>
             </div>
             </Col>
         </Row>
         <div>
-            <Table stripe :columns="columns1" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px"></Table>
+            <Table stripe :columns="columns1" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 3px" size="large"></Table>
             <div style="margin: 10px">
                 <div style="float: right;">
                     <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>
@@ -32,6 +32,7 @@
                     title="新增用户"
                     :loading="addLoading"
                     @on-ok="addOk"
+                    :mask-closable="false"
                     @on-cancel="addCancel">
                 <Form :model="formItem" :label-width="80" :rules="addRuleInline">
                     <FormItem label="姓名" prop="name">
@@ -111,7 +112,7 @@
                                 h('Button', {
                                     props: {
                                         type: 'primary',
-                                        size: 'small'
+                                        size: 'large'
                                     },
                                     style: {
                                         marginRight: '5px'
@@ -126,7 +127,7 @@
                                 h('Button', {
                                     props: {
                                         type: 'error',
-                                        size: 'small'
+                                        size: 'large'
                                     },
                                     on: {
                                         click: () => {
@@ -177,7 +178,7 @@
                 },
                 changeModal:false,
                 changeLoading:true,
-                changeData:[],
+                changeData:{},
                 deleteModel:false,
                 deleteData:''
             }
@@ -206,6 +207,7 @@
             },
             changeOne(data){
                 var self=this
+                self.changeData={}
                 self.changeData = JSON.parse(JSON.stringify(data))
                 self.changeModal=true;
                 console.log(changeData)
@@ -276,7 +278,7 @@
             addOne(){
                 var self= this;
                 self.modal1=true;
-                self.formItem=[]
+                self.formItem={};
             }
         }
 

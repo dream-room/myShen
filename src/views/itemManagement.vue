@@ -2,12 +2,13 @@
     <div>
         <Alert>物品管理</Alert>
         <div>
-            <Form  :model="formInline" inline :label-width="40" >
-                <FormItem  >
+            <Form  :model="selectModel" inline :label-width="40" >
+                <FormItem>
                     <label style="font-size: 20px;vertical-align: middle">物品名称：</label>
-                    <Input type="text" v-model="formInline.name" placeholder="" clearable style="width: 200px" >
+                    <Input type="text" v-model="selectModel.name" placeholder="" clearable style="width: 200px" >
                     </Input>
                 </FormItem>
+
                 <FormItem  style="float: right">
                     <Button type="success" @click="addOne" size="large">新增</Button>
                     <Button type="primary" @click="selectData" size="large">搜索</Button>
@@ -28,26 +29,27 @@
             <Modal
                     v-model="showAddModel"
                     width="800"
+                    :mask-closable="false"
                     title="新增物品">
                 <Form  ref="addModel" :model="addModel" :label-width="80" :rules="addRuleInline" >
                     <Row>
                         <Col span="12">
-                    <FormItem label="姓名" prop="name">
-                        <Input v-model="addModel.name" placeholder="请输入姓名" />
+                    <FormItem label="名称" prop="name">
+                        <Input v-model="addModel.name" placeholder="请输入名称" />
                     </FormItem>
                         </Col>
                         <Col span="12">
                     <FormItem label="状态" prop="status">
                         <Select v-model="addModel.status">
-                            <Option value="1">正常</Option>
+                            <Option value="1" selected>正常</Option>
                             <Option value="2">禁用</Option>
                         </Select>
                     </FormItem>
                         </Col>
                     </Row>
-                    <FormItem label="零件">
-                        <Select v-model="addModel.goodsComponents" filterable multiple>
-                            <Option v-for="item in componentsList" :value="item.value" >{{ item.name }}</Option>
+                    <FormItem label="零件" >
+                        <Select v-model="addModel.componentsIds" filterable multiple size="large">
+                            <Option v-for="item in componentsList" :value="item.id" :key="item.id">{{item.name}}</Option>
                         </Select>
                     </FormItem>
                 </Form>
@@ -58,26 +60,28 @@
             <!--修改-->
             <Modal
                     v-model="showChangeModel"
+                    width="800"
+                    :mask-closable="false"
                     title="修改物品">
                 <Form  ref="changeModel" :model="changeModel" :label-width="80" :rules="addRuleInline" >
                     <Row>
                         <Col span="12">
-                        <FormItem label="姓名" prop="name">
-                            <Input v-model="changeModel.name" placeholder="请输入姓名" />
+                        <FormItem label="名称" prop="name">
+                            <Input v-model="changeModel.name" placeholder="请输入名称" />
                         </FormItem>
                         </Col>
                         <Col span="12">
                         <FormItem label="状态" prop="status">
                             <Select v-model="changeModel.status">
-                                <Option value="1">正常</Option>
+                                <Option value="1" >正常</Option>
                                 <Option value="2">禁用</Option>
                             </Select>
                         </FormItem>
                         </Col>
                     </Row>
                     <FormItem label="零件" >
-                        <Select v-model="changeModel.goodsComponents" filterable multiple>
-                            <Option v-for="item in componentsList" :value="item.id" :key="item.id">{{ item.name }}</Option>
+                        <Select v-model="changeModel.componentsIds" filterable multiple size="large">
+                            <Option v-for="item in componentsList" :value="item.id"  :key="item.id">{{ item.name }}</Option>
                         </Select>
                     </FormItem>
                 </Form>
@@ -108,7 +112,7 @@
     export default{
         data(){
             return{
-                formInline: {
+                selectModel: {
                     name: ""
                 },
                 allStatus:{"1":"正常","2":"禁用"},
@@ -143,7 +147,10 @@
                     {
                         title: '状态',
                         key: 'status',
-                        align:'center'
+                        align:'center',
+                        render: (h,params)=>{
+                            return this.allStatus[params.row.status]
+                        }
                     },
                     {
                         title: '修改时间',
@@ -190,24 +197,24 @@
                 addModel:{
                     name:'',
                     status:'',
-                    goodsComponents:[]
+                    componentsIds:[]
                 },
                 addRuleInline:{
                     name: [
                         { required: true, message: '名称不能为空', trigger: 'blur' }
                     ],
                     status: [
-                        { required: true, message: '请选择状态', trigger: 'blur' }
+                        { required: true, message: '请选择状态', trigger: 'change' }
                     ],
-                    goodsComponents: [
-                        { required: true, message: '零件不能为空', trigger: 'blur' }
+                    componentsIds: [
+                        { required: true, message: '零件不能为空', trigger: 'change' }
                     ],
                 },
                 showChangeModel:false,
                 changeModel:{
                     name:'',
-                    num:'',
-                    price:''
+                    status:'',
+                    componentsIds:[]
                 },
                 showDeleteModel:false,
                 deleteModel:''
@@ -215,7 +222,7 @@
             }
         },
         mounted () {
-
+            this.getAllComponents()
         },
         methods:{
             //获取零件列表
@@ -223,6 +230,19 @@
                 let self = this
                 this.$http.get('http://localhost:8689/components/all').then(response => {
                     self.componentsList=response.body
+                }, response => {
+                    // error callback
+                });
+            },
+            //根据物品查询零件
+            getSomeComponents(data){
+                let self= this
+                this.$http.get('http://localhost:8689/goods/'+data+'/components').then(response => {
+                    self.changeModel.componentsIds=[];
+                    for(let i in response.body )
+                    {
+                        self.changeModel.componentsIds.push(response.body[i].id)
+                    }
                 }, response => {
                     // error callback
                 });
@@ -251,8 +271,9 @@
             //新增
             addOne(){
                 this.$refs['addModel'].resetFields();
-                this.addModel=[];
-                this.getAllComponents();
+                this.addModel={};
+                this.addModel.status="1";
+                this.addModel.componentsIds=[];
                 this.showAddModel=true;
             },
             add(){
@@ -262,7 +283,7 @@
                         let sendData={
                             name:self.addModel.name,
                             status:self.addModel.status,
-                            goodsComponents:self.addModel.goodsComponents
+                            componentsIds:self.addModel.componentsIds
                         }
                         self.$http.post('http://localhost:8689/goods',sendData).then(response => {
                             self.showAddModel=false;
@@ -279,11 +300,25 @@
             //修改
             changeOne(data){
                 var self=this
-                this.$refs['changeModel'].resetFields();
-                self.changeModel = JSON.parse(JSON.stringify(data))
-                self.changeModel.status=data.status.toString()
-//                self.changeModel.price=data.price.toString()
-                self.showChangeModel=true;
+                this.$http.get('http://localhost:8689/goods/'+data.id+'/components').then(response => {
+                    self.changeModel.componentsIds=[];
+                    for(let i in response.body )
+                    {
+                        self.changeModel.componentsIds.push(response.body[i].componentId)
+                    }
+                    setTimeout(function () {
+                        self.$refs['changeModel'].resetFields();
+                        self.changeModel.name=data.name;
+                        self.changeModel.id=data.id;
+                        self.changeModel.status=data.status.toString()
+                        self.showChangeModel=true;
+                    },500)
+
+                }, response => {
+                    // error callback
+                });
+
+
             },
             change(){
                 let self=this;
