@@ -8,18 +8,22 @@ const init=function (date) {
     m=date.getMinutes();
     s=date.getSeconds();
 }
-
-
 const getToday = function () {
     let myDate = new Date();
     init(myDate)
     mouth=(mouth<10)? "0"+mouth : mouth
     day=(day<10)? "0"+day : day
-    // h=(h<10)? "0"+h : h
-    // m=(m<10)? "0"+m : m
-    // s=(s<10)? "0"+s : s
     return year+"-"+mouth+"-"+day
+}
+const getTime =function (data) {
+    let newDate = new Date();
+    newDate.setTime(data * 1000);
+    console.log(newDate.toLocaleDateString());
+    console.log(newDate.toLocaleString());
+    console.log(newDate.toLocaleTimeString());
+    return newDate.toLocaleDateString()
+
 }
 
 
-export { getToday}
+export { getToday,getTime}

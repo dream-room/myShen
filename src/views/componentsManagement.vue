@@ -84,6 +84,7 @@
 
 </template>
 <script>
+    import {getTime} from '../Tools/timeMethod'
     export default{
         data(){
             return{
@@ -119,7 +120,10 @@
                     {
                         title: '修改时间',
                         key: 'updateTime',
-                        align:'center'
+                        align:'center',
+                        render:(h,params)=>{
+                            return getTime(params.row.updateTime)
+                        }
                     },
                     {
                         title: '操作',

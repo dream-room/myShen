@@ -2,9 +2,15 @@
     <div>
         <Alert>订单管理</Alert>
         <div>
-            <Form  :model="formInline" inline :label-width="80" >
-                <FormItem label="订单名称" >
-                    <Input type="text" v-model="formInline.name" placeholder="" clearable style="width: 200px">
+            <Form  :model="selectModel" inline :label-width="20">
+                <FormItem>
+                    <label style="font-size: 20px;vertical-align: middle">订单编号：</label>
+                    <Input type="text" v-model="selectModel.no" placeholder="" clearable style="width: 200px;" >
+                    </Input>
+                </FormItem>
+                <FormItem>
+                    <label style="font-size: 20px;vertical-align: middle">订单名称：</label>
+                    <Input type="text" v-model="selectModel.name" placeholder="" clearable style="width: 200px" >
                     </Input>
                 </FormItem>
                 <FormItem  style="float: right">
@@ -15,13 +21,13 @@
             </Form>
         </div>
         <div>
-            <RadioGroup v-model="orderType" type="button" @on-change="selectDataByType">
+            <RadioGroup v-model="orderType" type="button" @on-change="selectDataByType" size="large">
                 <Radio label="1">已生成</Radio>
                 <Radio label="2">进行中</Radio>
                 <Radio label="3">已完成</Radio>
                 <Radio label="4">已作废</Radio>
             </RadioGroup>
-            <Table stripe :columns="searcherColumns" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px" size="large"></Table>
+            <Table stripe :columns="searcherColumns" :data="model" border no-data-text="你好像还没有添加数据哦！" width="100%" style="margin-top: 10px" size="large"></Table>
             <div style="margin: 10px">
                 <div style="float: right;">
                     <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>
@@ -91,8 +97,9 @@
     export default{
         data(){
             return{
-                formInline: {
-                    name: ""
+                selectModel: {
+                    no: "",
+                    name:""
                 },
                 orderType:'1',
                 count:0,//总数
@@ -107,24 +114,27 @@
                         width:"70px"
                     },
                     {
-                        title: '零件名称',
+                        title: '订单编号',
+                        type: 'index',
+                        align:'center',
+                    },
+                    {
+                        title: '订单名称',
                         key: 'name',
                         align:'center'
                     },
                     {
-                        title: '库存',
+                        title: '状态',
                         key: 'num',
                         align:'center'
                     },
                     {
-                        title: '通常价',
-                        key: 'price',
-                        align:'center'
-                    },
-                    {
-                        title: '修改时间',
+                        title: '创建时间',
                         key: 'updateTime',
-                        align:'center'
+                        align:'center',
+                        render: (h,params)=>{
+                            return this.allStatus[params.row.status]
+                        }
                     },
                     {
                         title: '操作',
@@ -143,7 +153,6 @@
                                     on: {
                                         click: () => {
                                             this.changeOne(params.row)
-                                            console.log(params.row)
                                         }
                                     }
                                 }, '修改'),
@@ -199,9 +208,11 @@
                 let self=this
                 let postData= {
                     "page": self.current-1,
-                    "size":self.currentPage
+                    "size":self.currentPage,
+                    'no': self.selectModel.no,
+                    'name':self.selectModel.name
                 }
-                this.$http.get('http://localhost:8689/components',{params:postData}).then(response => {
+                this.$http.get(this.URL+'/components',{params:postData}).then(response => {
                     self.model=response.body.content
                     self.count=response.body.totalElements
                     console.log(self.model)

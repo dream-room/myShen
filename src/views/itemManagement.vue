@@ -109,6 +109,7 @@
 
 </template>
 <script>
+    import {getTime} from '../Tools/timeMethod'
     export default{
         data(){
             return{
@@ -155,7 +156,10 @@
                     {
                         title: '修改时间',
                         key: 'updateTime',
-                        align:'center'
+                        align:'center',
+                        render:(h,params)=>{
+                            return getTime(params.row.updateTime)
+                        }
                     },
                     {
                         title: '操作',
@@ -174,7 +178,7 @@
                                     on: {
                                         click: () => {
                                             this.changeOne(params.row)
-                                            console.log(params.row)
+                                            // console.log(params.row)
                                         }
                                     }
                                 }, '修改'),
@@ -229,7 +233,7 @@
             //获取零件列表
             getAllComponents(){
                 let self = this
-                this.$http.get('http://localhost:8689/components/all').then(response => {
+                this.$http.get(this.URL+'/components/all').then(response => {
                     self.componentsList=response.body
                 }, response => {
                     // error callback
@@ -238,7 +242,7 @@
             //根据物品查询零件
             getSomeComponents(data){
                 let self= this
-                this.$http.get('http://localhost:8689/goods/'+data+'/components').then(response => {
+                this.$http.get(this.URL+'/goods/'+data+'/components').then(response => {
                     self.changeModel.componentsIds=[];
                     for(let i in response.body )
                     {
@@ -255,10 +259,10 @@
                     "page": self.current-1,
                     "size":self.currentPage
                 }
-                this.$http.get('http://localhost:8689/goods',{params:postData}).then(response => {
+                this.$http.get(this.URL+'/goods',{params:postData}).then(response => {
                     self.model=response.body.content
                     self.count=response.body.totalElements
-                    console.log(self.model)
+                    // console.log(self.model)
                 }, response => {
                     // error callback
                 });
@@ -273,7 +277,7 @@
             addOne(){
                 this.$refs['addModel'].resetFields();
                 this.addModel={};
-                this.addModel.status="1";
+                this.addModel.status = '1';
                 this.addModel.componentsIds=[];
                 this.showAddModel=true;
             },
@@ -286,7 +290,7 @@
                             status:self.addModel.status,
                             componentsIds:self.addModel.componentsIds
                         }
-                        self.$http.post('http://localhost:8689/goods',sendData).then(response => {
+                        self.$http.post(this.URL+'/goods',sendData).then(response => {
                             self.showAddModel=false;
                             self.$Message.success('新增成功！！');
                             self.selectData();
@@ -301,7 +305,7 @@
             //修改
             changeOne(data){
                 var self=this
-                this.$http.get('http://localhost:8689/goods/'+data.id+'/components').then(response => {
+                this.$http.get(this.URL+'/goods/'+data.id+'/components').then(response => {
                     self.changeModel.componentsIds=[];
                     for(let i in response.body )
                     {
@@ -313,7 +317,7 @@
                         self.changeModel.id=data.id;
                         self.changeModel.status=data.status.toString()
                         self.showChangeModel=true;
-                    },500)
+                    },300)
 
                 }, response => {
                     // error callback
@@ -325,7 +329,7 @@
                 let self=this;
                 this.$refs['changeModel'].validate((valid) => {
                     if (valid) {
-                        self.$http.post('http://localhost:8689/goods',self.changeModel).then(response => {
+                        self.$http.post(this.URL+'/goods',self.changeModel).then(response => {
                             self.showChangeModel=false;
                             self.$Message.success('修改成功！！');
                             self.selectData();
@@ -346,7 +350,7 @@
             },
             del(){
                 var self=this
-                this.$http.delete('http://localhost:8689/goods/'+ this.deleteModel)
+                this.$http.delete(this.URL+'/goods/'+ this.deleteModel)
                     .then(response => {
                         self.showDeleteModel=false
                         this.$Message.success('删除成功！！');
