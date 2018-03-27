@@ -1,6 +1,7 @@
 
 <template>
     <div>
+        <Alert>用户列表</Alert>
         <Row>
             <Col span="24">
             <div  style="float: right">

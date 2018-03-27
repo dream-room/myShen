@@ -1,5 +1,6 @@
 <template>
 <div>
+    <Alert>权限管理</Alert>
         <Row>
             <Form ref="formInline" :model="formInline" inline :label-width="80" >
                 <FormItem label="订单号">
