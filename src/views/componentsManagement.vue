@@ -185,6 +185,9 @@
 
             }
         },
+        mounted () {
+            this.selectData();
+        },
         methods:{
             //搜索
             selectData(){

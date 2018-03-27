@@ -223,6 +223,7 @@
         },
         mounted () {
             this.getAllComponents()
+            this.selectData()
         },
         methods:{
             //获取零件列表

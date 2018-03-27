@@ -7,6 +7,7 @@ import App from './app.vue';
 import  VueResource  from 'vue-resource'
 import 'iview/dist/styles/iview.css';
 import  ECharts  from 'echarts'
+import  URL from './api/URL'
 
 // import Axios from 'axios'
 
@@ -24,6 +25,7 @@ const RouterConfig = {
     routes: Routers
 };
 // Vue.prototype.routeName = ''
+Vue.prototype.URL=URL.url
 const router = new VueRouter(RouterConfig);
 router.beforeEach((to, from, next) => {
     iView.LoadingBar.start();

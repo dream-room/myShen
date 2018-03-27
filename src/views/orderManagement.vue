@@ -3,7 +3,7 @@
         <Alert>订单管理</Alert>
         <div>
             <Form  :model="formInline" inline :label-width="80" >
-                <FormItem label="物品名称" >
+                <FormItem label="订单名称" >
                     <Input type="text" v-model="formInline.name" placeholder="" clearable style="width: 200px">
                     </Input>
                 </FormItem>
@@ -15,6 +15,12 @@
             </Form>
         </div>
         <div>
+            <RadioGroup v-model="orderType" type="button" @on-change="selectDataByType">
+                <Radio label="1">已生成</Radio>
+                <Radio label="2">进行中</Radio>
+                <Radio label="3">已完成</Radio>
+                <Radio label="4">已作废</Radio>
+            </RadioGroup>
             <Table stripe :columns="searcherColumns" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px" size="large"></Table>
             <div style="margin: 10px">
                 <div style="float: right;">
@@ -88,6 +94,7 @@
                 formInline: {
                     name: ""
                 },
+                orderType:'1',
                 count:0,//总数
                 current: 1,//页码
                 currentPage:10,//每页显示的数量
@@ -183,6 +190,9 @@
 
             }
         },
+        mounted () {
+            this.selectData();
+        },
         methods:{
             //搜索
             selectData(){
@@ -199,6 +209,9 @@
                     // error callback
                 });
 
+            },
+            selectDataByType(){
+                console.log(this.orderType)
             },
             getOnePage(page){
                 let self=this;
@@ -245,7 +258,7 @@
                 let self=this;
                 this.$refs['changeModel'].validate((valid) => {
                     if (valid) {
-                        self.$http.post('http://localhost:8689/components',self.changeModel).then(response => {
+                        self.$http.post(URL+'/components',self.changeModel).then(response => {
                             self.showChangeModel=false;
                             self.$Message.success('修改成功！！');
                             self.selectData();

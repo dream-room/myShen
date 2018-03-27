@@ -1,25 +1,17 @@
 
 <template>
     <div>
-        <!--<Form ref="formInline" inline >-->
-        <!--<FormItem>-->
-
-        <!--</FormItem>-->
-        <!--<FormItem  style="float: right">-->
-        <!--<Button type="primary" @click="addOne">新增</Button>-->
-        <!--<Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>-->
-        <!--</FormItem>-->
-        <!--</Form>-->
         <Row>
             <Col span="24">
             <div  style="float: right">
                 <Button type="success" @click="addOne" size="large">新增</Button>
-                <Button type="primary" shape="circle" icon="ios-search" @click="selectDate" size="large"></Button>
+                <!--<Button type="primary" shape="circle" icon="ios-search" @click="selectDate"></Button>-->
+                <Button type="primary"@click="selectDate" size="large">搜索</Button>
             </div>
             </Col>
         </Row>
         <div>
-            <Table stripe :columns="columns1" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 3px" size="large"></Table>
+            <Table stripe :columns="columns1" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 10px" size="large"></Table>
             <div style="margin: 10px">
                 <div style="float: right;">
                     <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>
@@ -94,7 +86,7 @@
                         width:"70px"
                     },
                     {
-                        title: '姓名',
+                        title: '表单名称',
                         align: 'center',
                         key: 'name'
                     },
@@ -183,6 +175,11 @@
                 deleteData:''
             }
         },
+        mounted () {
+            console.log(this.URL)
+            this.selectDate();
+
+        },
         methods:{
             selectDate(){
                 let self=this
@@ -190,13 +187,13 @@
                     "page": self.current-1,
                     "size":self.currentPage
                 }
-                this.$http.get('http://localhost:8689/users',{params:postData}).then(response => {
-                    self.model=response.body.content
-                    self.count=response.body.totalElements
-                    console.log(self.model)
-                }, response => {
-                    // error callback
-                });
+               this.$http.get(this.URL+'/users',{params:postData}).then(response => {
+                   self.model=response.body.content
+                   self.count=response.body.totalElements
+                   console.log(self.model)
+               }, response => {
+                   // error callback
+               });
 
             },
             getOnePage(page){
@@ -225,13 +222,13 @@
                     this.$Message.error('请填写全部数据');
                     return;
                 }
-                this.$http.post('http://localhost:8689/users',JSON.stringify(this.changeData)).then(response => {
-                    self.changeModal=false;
-                    this.$Message.success('修改成功！！');
-                    self.selectDate();
-                }, response => {
-                    // error callback
-                });
+               this.$http.post(this.URL+'/users',JSON.stringify(this.changeData)).then(response => {
+                   self.changeModal=false;
+                   this.$Message.success('修改成功！！');
+                   self.selectDate();
+               }, response => {
+                   // error callback
+               });
             },
             deleteOne(data){
                 var self= this
@@ -240,14 +237,14 @@
             },
             del(){
                 var self=this
-                this.$http.delete('http://localhost:8689/users/'+ this.deleteData)
-                    .then(response => {
-                        self.deleteModel=false
-                        this.$Message.success('删除成功！！');
-                        self.selectDate();
-                    }, response => {
-                        // error callback
-                    });
+               this.$http.delete(this.URL+'/users/'+ this.deleteData)
+                   .then(response => {
+                       self.deleteModel=false
+                       this.$Message.success('删除成功！！');
+                       self.selectDate();
+                   }, response => {
+                       // error callback
+                   });
             },
 
             addOk () {
@@ -264,13 +261,14 @@
                     no:self.formItem.no,
                     password:self.formItem.password
                 }
-                this.$http.post('http://localhost:8689/users',sendData).then(response => {
-                    self.modal1=false;
-                    this.$Message.success('新增成功！！');
-                    self.selectDate();
-                }, response => {
-                    // error callback
-                });
+
+               this.$http.post(this.URL+'/users',sendData).then(response => {
+                   self.modal1=false;
+                   this.$Message.success('新增成功！！');
+                   self.selectDate();
+               }, response => {
+                   // error callback
+               });
             },
             addCancel () {
                 this.$Message.info('取消新增！！');
