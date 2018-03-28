@@ -38,13 +38,13 @@
             <!--//添加-->
             <Modal
                     v-model="showAddModel"
-
-                    title="新增用户">
+                    width="600"
+                    title="新增订单">
                 <Form  ref="addModel" :model="addModel" :label-width="80" :rules="addRuleInline" >
-                    <FormItem label="姓名" prop="name">
+                    <FormItem label="订单编号" prop="name">
                         <Input v-model="addModel.name" placeholder="请输入姓名" />
                     </FormItem>
-                    <FormItem label="通常价" prop="price">
+                    <FormItem label="订单名称" prop="price">
                         <Input v-model="addModel.price" placeholder="请输入价格" />
                     </FormItem>
                     <FormItem label="库存" prop="num">

@@ -28,7 +28,7 @@
             <!--//添加-->
             <Modal
                     v-model="showAddModel"
-                    width="800"
+                    width="600"
                     :mask-closable="false"
                     title="新增物品">
                 <Form  ref="addModel" :model="addModel" :label-width="80" :rules="addRuleInline" >
@@ -47,11 +47,6 @@
                     </FormItem>
                         </Col>
                     </Row>
-                    <FormItem label="零件" >
-                        <Select v-model="addModel.componentsIds" filterable multiple size="large">
-                            <Option v-for="item in componentsList" :value="item.id" :key="item.id">{{item.name}}</Option>
-                        </Select>
-                    </FormItem>
                 </Form>
                 <div slot="footer">
                     <Button type="primary" @click="add()" size="large">新增</Button>
@@ -60,7 +55,7 @@
             <!--修改-->
             <Modal
                     v-model="showChangeModel"
-                    width="800"
+                    width="600"
                     :mask-closable="false"
                     title="修改物品">
                 <Form  ref="changeModel" :model="changeModel" :label-width="80" :rules="addRuleInline" >
@@ -79,10 +74,47 @@
                         </FormItem>
                         </Col>
                     </Row>
-                    <FormItem label="零件" >
-                        <Select v-model="changeModel.componentsIds" filterable multiple size="large">
-                            <Option v-for="item in componentsList" :value="item.id"  :key="item.id">{{ item.name }}</Option>
-                        </Select>
+                </Form>
+                <div slot="footer">
+                    <Button type="primary" @click="change()" size="large">修改</Button>
+                </div>
+            </Modal>
+            <!--配置-->
+            <Modal
+                    v-model="showConfigureModel"
+                    width="600"
+                    :mask-closable="false"
+                    title="配置零件">
+                <Form  ref="formDynamic" :model="formDynamic" :label-width="80" >
+                    <FormItem
+                            v-for="(item, index) in formDynamic.items"
+                            :key="index"
+                            :label="'零件 '+(index+1)"
+                            :prop="'items.' + index + '.id'+'.num'"
+                            >
+                        <Row>
+                            <Col span="12">
+                                    <Select v-model="item.id" filterable>
+                                        <Option v-for="cp in componentsList" :value="cp.id"  :key="cp.id">{{ cp.name }}</Option>
+                                    </Select>
+                            </Col>
+                            <Col span="2" offset="1">
+                                <label>数量：</label>
+                            </Col>
+                            <Col span="5" >
+                                <Input type="text" v-model="item.num" placeholder="输入数量"></Input>
+                            </Col>
+                            <Col span="3" offset="1">
+                                <Button type="ghost" @click="handleRemove(index)">删除</Button>
+                            </Col>
+                        </Row>
+                    </FormItem>
+                    <FormItem>
+                        <Row>
+                            <Col span="12">
+                                <Button type="dashed" long @click="handleAdd" icon="plus-round">新增</Button>
+                            </Col>
+                        </Row>
                     </FormItem>
                 </Form>
                 <div slot="footer">
@@ -123,17 +155,6 @@
                 currentPage:10,//每页显示的数量
                 model:[],
                 searcherColumns:[
-//                    {
-//                        type: 'expand',
-//                        width: 50,
-//                        render: (h, params) => {
-//                            return h(123, {
-//                                props: {
-//                                    row: params.row
-//                                }
-//                            })
-//                        }
-//                    },
                     {
                         title: '序号',
                         type: 'index',
@@ -144,6 +165,11 @@
                         title: '名称',
                         key: 'name',
                         align:'center'
+                    },
+                    {
+                        title: '价格',
+                        key: 'price',
+                        align:'center',
                     },
                     {
                         title: '状态',
@@ -184,6 +210,20 @@
                                 }, '修改'),
                                 h('Button', {
                                     props: {
+                                        type: 'info',
+                                        size: 'default'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.configureOne(params.row)
+                                        }
+                                    }
+                                }, '配置'),
+                                h('Button', {
+                                    props: {
                                         type: 'error',
                                         size: 'default',
                                     },
@@ -201,7 +241,6 @@
                 addModel:{
                     name:'',
                     status:'',
-                    componentsIds:[]
                 },
                 addRuleInline:{
                     name: [
@@ -210,18 +249,19 @@
                     status: [
                         { required: true, message: '请选择状态', trigger: 'change' }
                     ],
-                    componentsIds: [
-                        { required: true, message: '零件不能为空', trigger: 'change' }
-                    ],
                 },
                 showChangeModel:false,
                 changeModel:{
                     name:'',
-                    status:'',
-                    componentsIds:[]
+                    status:''
                 },
                 showDeleteModel:false,
-                deleteModel:''
+                deleteModel:'',
+                showConfigureModel:false,
+                // index: 1,
+                formDynamic: {
+                    items: []
+                }
 
             }
         },
@@ -278,7 +318,6 @@
                 this.$refs['addModel'].resetFields();
                 this.addModel={};
                 this.addModel.status = '1';
-                this.addModel.componentsIds=[];
                 this.showAddModel=true;
             },
             add(){
@@ -287,8 +326,7 @@
                     if (valid) {
                         let sendData={
                             name:self.addModel.name,
-                            status:self.addModel.status,
-                            componentsIds:self.addModel.componentsIds
+                            status:self.addModel.status
                         }
                         self.$http.post(this.URL+'/goods',sendData).then(response => {
                             self.showAddModel=false;
@@ -304,26 +342,12 @@
             },
             //修改
             changeOne(data){
-                var self=this
-                this.$http.get(this.URL+'/goods/'+data.id+'/components').then(response => {
-                    self.changeModel.componentsIds=[];
-                    for(let i in response.body )
-                    {
-                        self.changeModel.componentsIds.push(response.body[i].componentId)
-                    }
-                    setTimeout(function () {
+                        var self=this
                         self.$refs['changeModel'].resetFields();
                         self.changeModel.name=data.name;
                         self.changeModel.id=data.id;
                         self.changeModel.status=data.status.toString()
                         self.showChangeModel=true;
-                    },300)
-
-                }, response => {
-                    // error callback
-                });
-
-
             },
             change(){
                 let self=this;
@@ -341,6 +365,41 @@
                     }
                 })
 
+            },
+            // 配置
+            configureOne(data){
+                let self = this;
+                this.$http.get(this.URL+'/goods/'+data.id+'/components').then(response => {
+                    self.formDynamic.items=[];
+                    for(let i in response.body )
+                    {
+                        self.formDynamic.items.push(response.body[i])
+                    }
+                    console.log(response.body)
+                    self.showConfigureModel=true;
+                }, response => {
+                    // error callback
+                });
+            },
+            configure(){
+                // self.$http.post(this.URL+'/',self.formDynamic).then(response => {
+                //     self.showChangeModel=false;
+                //     self.$Message.success('修改成功！！');
+                //     self.selectData();
+                // }, response => {
+                //     // error callback
+                // });
+
+            },
+            handleAdd () {
+                this.formDynamic.items.push({
+                    id: '',
+                    num: ''
+                });
+            },
+            handleRemove (index) {
+                this.formDynamic.items.splice(index,1)
+                console.log(this.formDynamic.items)
             },
             //删除
             deleteOne(data){
@@ -360,7 +419,6 @@
                         this.$Message.warning(response.body.message);
                     });
             },
-
         }
 
     }

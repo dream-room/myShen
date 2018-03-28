@@ -16,7 +16,12 @@
             </Form>
         </div>
         <div>
-            <Table stripe :columns="searcherColumns" :data="model" border no-data-text="点击搜索查看数据吧！" width="100%" style="margin-top: 3px" size="large"></Table>
+            <RadioGroup v-model="orderType" type="button" @on-change="selectData" size="large">
+                <Radio label="1">机芯</Radio>
+                <Radio label="2">气压表</Radio>
+                <Radio label="3">压力表</Radio>
+            </RadioGroup>
+            <Table stripe :columns="searcherColumns" :data="model" border no-data-text="你好像还没有添加数据哦！" width="100%" style="margin-top: 3px" size="large"></Table>
             <div style="margin: 10px">
                 <div style="float: right;">
                     <Page :total="count" show-elevator @on-change="getOnePage" :current="current" show-total :page-size="currentPage"></Page>
@@ -35,6 +40,13 @@
                     </FormItem>
                     <FormItem label="通常价" prop="price">
                         <Input v-model="addModel.price" placeholder="请输入价格" />
+                    </FormItem>
+                    <FormItem label="类型" prop="type">
+                        <Select v-model="addModel.type" >
+                            <Option value="1">机芯</Option>
+                            <Option value="2">气压表</Option>
+                            <Option value="3">压力表</Option>
+                        </Select>
                     </FormItem>
                     <FormItem label="库存" prop="num">
                         <Input v-model="addModel.num" placeholder="请输入库存"  />
@@ -55,6 +67,13 @@
                     </FormItem>
                     <FormItem label="通常价" prop="price">
                         <Input v-model="changeModel.price" placeholder="请输入价格" />
+                    </FormItem>
+                    <FormItem label="类型" prop="type">
+                        <Select v-model="changeModel.type" >
+                            <Option value="1">机芯</Option>
+                            <Option value="2">气压表</Option>
+                            <Option value="3">压力表</Option>
+                        </Select>
                     </FormItem>
                     <FormItem label="库存" prop="num">
                         <Input v-model="changeModel.num" placeholder="请输入库存"  />
@@ -118,6 +137,14 @@
                         align:'center'
                     },
                     {
+                        title: '类型',
+                        key: 'type',
+                        align:'center',
+                        render:(h,params)=>{
+                            return this.allType[params.row.type]
+                        }
+                    },
+                    {
                         title: '修改时间',
                         key: 'updateTime',
                         align:'center',
@@ -177,6 +204,9 @@
                     price: [
                         { required: true, message: '价格不能为空', trigger: 'blur' }
                     ],
+                    type: [
+                        { required: true, message: '请选择类型', trigger: 'change' }
+                    ]
                 },
                 showChangeModel:false,
                 changeModel:{
@@ -185,8 +215,9 @@
                     price:''
                 },
                 showDeleteModel:false,
-                deleteModel:''
-
+                deleteModel:'',
+                allType:{"1":"机芯","2":"气压表","3":"压力表"},
+                orderType:'1'
             }
         },
         mounted () {
@@ -198,7 +229,8 @@
                 let self=this
                 let postData= {
                     "page": self.current-1,
-                    "size":self.currentPage
+                    "size":self.currentPage,
+                    "type":self.orderType
                 }
                 this.$http.get('http://localhost:8689/components',{params:postData}).then(response => {
                     self.model=response.body.content
@@ -227,7 +259,8 @@
                         let sendData={
                             name:self.addModel.name,
                             num:self.addModel.num,
-                            price:self.addModel.price
+                            price:self.addModel.price,
+                            type:self.addModel.type
                         }
                         self.$http.post('http://localhost:8689/components',sendData).then(response => {
                             self.showAddModel=false;
@@ -245,9 +278,11 @@
             changeOne(data){
                 var self=this
                 this.$refs['changeModel'].resetFields();
+                console.log(data)
                 self.changeModel = JSON.parse(JSON.stringify(data))
                 self.changeModel.num=data.num.toString()
                 self.changeModel.price=data.price.toString()
+                self.changeModel.type=data.type.toString()
                 self.showChangeModel=true;
             },
             change(){
