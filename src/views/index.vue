@@ -65,9 +65,9 @@
                             <MenuItem name="pageHome" class="index-menu">
                                 <Icon type="home"></Icon>
                                 主页</MenuItem>
-                            <MenuItem name="personalInformation" class="index-menu">
-                                <Icon type="person"></Icon>
-                                个人资料</MenuItem>
+                            <!--<MenuItem name="personalInformation" class="index-menu">-->
+                                <!--<Icon type="person"></Icon>-->
+                                <!--个人资料</MenuItem>-->
 
                         </Submenu>
                         <Submenu name="2" >
@@ -95,19 +95,19 @@
                             </template>
                             <MenuItem name="list" class="index-menu">
                                 <Icon type="ios-people"></Icon>用户列表</MenuItem>
-                            <MenuItem name="authorityManagement" class="index-menu">
-                                <Icon type="locked"></Icon>权限管理</MenuItem>
+                            <!--<MenuItem name="authorityManagement" class="index-menu">-->
+                                <!--<Icon type="locked"></Icon>权限管理</MenuItem>-->
                         </Submenu>
                     </Menu>
                 </Sider>
-                <Layout :style="{padding: '70px 24px 0',marginLeft: '200px',minHeight:'100vh'}" >
+                <Layout :style="{padding: '70px 1px 1px 1px',marginLeft: '200px',minHeight:'100vh',}" >
                     <!--<Breadcrumb :style="{margin: '24px 0'}" >-->
                         <!--<BreadcrumbItem >首页</BreadcrumbItem>-->
                         <!--<BreadcrumbItem>{{oneName}}</BreadcrumbItem>-->
                         <!--&lt;!&ndash;<BreadcrumbItem>Components</BreadcrumbItem>&ndash;&gt;-->
                         <!--&lt;!&ndash;<BreadcrumbItem>Layout</BreadcrumbItem>&ndash;&gt;-->
                     <!--</Breadcrumb>-->
-                    <Content :style="{padding: '24px', minHeight: '280px', background: '#fff',maxHeight:'100vh'}">
+                    <Content :style="{padding: '24px 24px 0 24px', minHeight: '280px', background: '#fff',maxHeight:'100vh'}">
                         <router-view></router-view>
                     </Content>
                     <div>

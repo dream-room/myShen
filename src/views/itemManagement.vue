@@ -32,21 +32,15 @@
                     :mask-closable="false"
                     title="新增物品">
                 <Form  ref="addModel" :model="addModel" :label-width="80" :rules="addRuleInline" >
-                    <Row>
-                        <Col span="12">
                     <FormItem label="名称" prop="name">
                         <Input v-model="addModel.name" placeholder="请输入名称" />
                     </FormItem>
-                        </Col>
-                        <Col span="12">
                     <FormItem label="状态" prop="status">
                         <Select v-model="addModel.status">
                             <Option value="1" selected>正常</Option>
                             <Option value="2">禁用</Option>
                         </Select>
                     </FormItem>
-                        </Col>
-                    </Row>
                 </Form>
                 <div slot="footer">
                     <Button type="primary" @click="add()" size="large">新增</Button>
@@ -59,21 +53,15 @@
                     :mask-closable="false"
                     title="修改物品">
                 <Form  ref="changeModel" :model="changeModel" :label-width="80" :rules="addRuleInline" >
-                    <Row>
-                        <Col span="12">
                         <FormItem label="名称" prop="name">
                             <Input v-model="changeModel.name" placeholder="请输入名称" />
                         </FormItem>
-                        </Col>
-                        <Col span="12">
                         <FormItem label="状态" prop="status">
                             <Select v-model="changeModel.status">
                                 <Option value="1" >正常</Option>
                                 <Option value="2">禁用</Option>
                             </Select>
                         </FormItem>
-                        </Col>
-                    </Row>
                 </Form>
                 <div slot="footer">
                     <Button type="primary" @click="change()" size="large">修改</Button>
@@ -82,19 +70,20 @@
             <!--配置-->
             <Modal
                     v-model="showConfigureModel"
-                    width="600"
+                    width="800"
                     :mask-closable="false"
                     title="配置零件">
-                <Form  ref="formDynamic" :model="formDynamic" :label-width="80" >
+                <Form  ref="formDynamic" :model="formDynamic" :label-width="80"  >
                     <FormItem
                             v-for="(item, index) in formDynamic.items"
                             :key="index"
                             :label="'零件 '+(index+1)"
                             :prop="'items.' + index + '.id'+'.num'"
+
                             >
                         <Row>
                             <Col span="12">
-                                    <Select v-model="item.id" filterable>
+                                    <Select v-model="item.id" filterable >
                                         <Option v-for="cp in componentsList" :value="cp.id"  :key="cp.id">{{ cp.name }}</Option>
                                     </Select>
                             </Col>
@@ -118,7 +107,7 @@
                     </FormItem>
                 </Form>
                 <div slot="footer">
-                    <Button type="primary" @click="change()" size="large">修改</Button>
+                    <Button type="primary" @click="configure()" size="large">配置</Button>
                 </div>
             </Modal>
             <!--删除-->
@@ -240,7 +229,7 @@
                 showAddModel:false,
                 addModel:{
                     name:'',
-                    status:'',
+                    status:''
                 },
                 addRuleInline:{
                     name: [
@@ -248,7 +237,7 @@
                     ],
                     status: [
                         { required: true, message: '请选择状态', trigger: 'change' }
-                    ],
+                    ]
                 },
                 showChangeModel:false,
                 changeModel:{
@@ -368,7 +357,8 @@
             },
             // 配置
             configureOne(data){
-                let self = this;
+                let self = this
+                self.formDynamic.itemId=data.id
                 this.$http.get(this.URL+'/goods/'+data.id+'/components').then(response => {
                     self.formDynamic.items=[];
                     for(let i in response.body )
@@ -382,6 +372,9 @@
                 });
             },
             configure(){
+                let self =this
+                console.log(self.formDynamic.items)
+                console.log(self.formDynamic.itemId)
                 // self.$http.post(this.URL+'/',self.formDynamic).then(response => {
                 //     self.showChangeModel=false;
                 //     self.$Message.success('修改成功！！');

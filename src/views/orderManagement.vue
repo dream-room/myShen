@@ -5,18 +5,29 @@
             <Form  :model="selectModel" inline :label-width="20">
                 <FormItem>
                     <label style="font-size: 20px;vertical-align: middle">订单编号：</label>
-                    <Input type="text" v-model="selectModel.no" placeholder="" clearable style="width: 200px;" >
+                    <Input type="text" v-model="selectModel.no" placeholder="输入订单编号" clearable style="width: 200px;" >
+                    </Input>
+                </FormItem>
+                <!--<FormItem>-->
+                    <!--<label style="font-size: 20px;vertical-align: middle">订单名称：</label>-->
+                    <!--<Input type="text" v-model="selectModel.name" placeholder="" clearable style="width: 200px;" >-->
+                    <!--</Input>-->
+                <!--</FormItem>-->
+                <FormItem>
+                    <label style="font-size: 20px;vertical-align: middle">下单公司：</label>
+                    <Input type="text" v-model="selectModel.name" placeholder="输入下单公司名称" clearable style="width: 200px" >
                     </Input>
                 </FormItem>
                 <FormItem>
-                    <label style="font-size: 20px;vertical-align: middle">订单名称：</label>
-                    <Input type="text" v-model="selectModel.name" placeholder="" clearable style="width: 200px" >
+                    <label style="font-size: 20px;vertical-align: middle">下单时间：</label>
+                    <DatePicker type="date" placeholder="选择下单时间" style="width: 200px"></DatePicker>
                     </Input>
                 </FormItem>
                 <FormItem  style="float: right">
                     <Button type="success" @click="addOne" size="large">新增</Button>
                     <Button type="primary" @click="selectData" size="large">搜索</Button>
                 </FormItem>
+
                 <!--</Row>-->
             </Form>
         </div>
@@ -40,15 +51,21 @@
                     v-model="showAddModel"
                     width="600"
                     title="新增订单">
-                <Form  ref="addModel" :model="addModel" :label-width="80" :rules="addRuleInline" >
+                <Form  ref="addModel" :model="addModel" :label-width="100" :rules="addRuleInline" >
                     <FormItem label="订单编号" prop="name">
-                        <Input v-model="addModel.name" placeholder="请输入姓名" />
+                        <Input v-model="addModel.name" placeholder="请输入编号" />
                     </FormItem>
                     <FormItem label="订单名称" prop="price">
-                        <Input v-model="addModel.price" placeholder="请输入价格" />
+                        <Input v-model="addModel.price" placeholder="请输入名称" />
                     </FormItem>
-                    <FormItem label="库存" prop="num">
-                        <Input v-model="addModel.num" placeholder="请输入库存"  />
+                    <FormItem label="订单公司" prop="price">
+                        <Input v-model="addModel.price" placeholder="请输入名称" />
+                    </FormItem>
+                    <FormItem label="订单时间" prop="num">
+                        <DatePicker type="date" placeholder="选择订单时间" style="width: 468px"></DatePicker>
+                    </FormItem>
+                    <FormItem label="最后交货日期" prop="num">
+                        <DatePicker type="date" placeholder="选择最后交货日期"  style="width: 468px"></DatePicker>
                     </FormItem>
                 </Form>
                 <div slot="footer">
@@ -58,16 +75,23 @@
             <!--修改-->
             <Modal
                     v-model="showChangeModel"
-                    title="修改用户">
-                <Form  ref="changeModel" :model="changeModel" :label-width="80" :rules="addRuleInline" >
-                    <FormItem label="姓名" prop="name">
-                        <Input v-model="changeModel.name" placeholder="请输入姓名" />
+                    width="600"
+                    title="修改订单">
+                <Form  ref="addModel" :model="changeModel" :label-width="100" :rules="addRuleInline" >
+                    <FormItem label="订单编号" prop="name">
+                        <Input v-model="changeModel.name" placeholder="请输入编号" />
                     </FormItem>
-                    <FormItem label="通常价" prop="price">
-                        <Input v-model="changeModel.price" placeholder="请输入价格" />
+                    <FormItem label="订单名称" prop="price">
+                        <Input v-model="changeModel.price" placeholder="请输入名称" />
                     </FormItem>
-                    <FormItem label="库存" prop="num">
-                        <Input v-model="changeModel.num" placeholder="请输入库存"  />
+                    <FormItem label="订单公司" prop="price">
+                        <Input v-model="changeModel.price" placeholder="请输入名称" />
+                    </FormItem>
+                    <FormItem label="订单时间" prop="num">
+                        <DatePicker type="date" placeholder="选择订单时间" style="width: 468px"></DatePicker>
+                    </FormItem>
+                    <FormItem label="最后交货日期" prop="num">
+                        <DatePicker type="date" placeholder="选择最后交货日期"  style="width: 468px"></DatePicker>
                     </FormItem>
                 </Form>
                 <div slot="footer">
@@ -78,11 +102,11 @@
             <Modal v-model="showDeleteModel" width="360">
                 <p slot="header" style="color:#f60;text-align:center">
                     <Icon type="information-circled"></Icon>
-                    <span>删除</span>
+                    <span>作废</span>
                 </p>
                 <div style="text-align:center">
-                    <h2>删除后可能对系统造成不可预计的影响</h2>
-                    <h2>确认删除？</h2>
+                    <h2>作废后可能对系统造成不可预计的影响</h2>
+                    <h2>确认作废？</h2>
                 </div>
                 <div slot="footer">
                     <Button type="error" size="large" long  @click="del">确认</Button>
@@ -148,7 +172,7 @@
                                         size: 'default'
                                     },
                                     style: {
-                                        marginRight: '5px'
+                                        marginRight: '5px',
                                     },
                                     on: {
                                         click: () => {
@@ -156,6 +180,21 @@
                                         }
                                     }
                                 }, '修改'),
+                                h('Button', {
+                                    props: {
+                                        type: 'warning',
+                                        size: 'default'
+                                    },
+                                    style: {
+                                        marginRight: '5px',
+                                        display:params.row.status==1?'inline':'none'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.changeOne(params.row)
+                                        }
+                                    }
+                                }, '配置'),
                                 h('Button', {
                                     props: {
                                         type: 'error',
@@ -166,7 +205,7 @@
                                             this.deleteOne(params.row)
                                         }
                                     }
-                                }, '删除')
+                                }, '作废')
                             ]);
                         }
                     }

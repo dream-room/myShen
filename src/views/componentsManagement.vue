@@ -17,6 +17,7 @@
         </div>
         <div>
             <RadioGroup v-model="orderType" type="button" @on-change="selectData" size="large">
+                <Radio label="">全部</Radio>
                 <Radio label="1">机芯</Radio>
                 <Radio label="2">气压表</Radio>
                 <Radio label="3">压力表</Radio>
@@ -217,7 +218,7 @@
                 showDeleteModel:false,
                 deleteModel:'',
                 allType:{"1":"机芯","2":"气压表","3":"压力表"},
-                orderType:'1'
+                orderType:''
             }
         },
         mounted () {
