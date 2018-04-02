@@ -10,18 +10,18 @@
     }
     .layout-logo{
         width: 100px;
-        height: 30px;
-        background: #5b6270;
+        height: 40px;
+        /*background: #5b6270;*/
         border-radius: 3px;
         float: left;
         position: relative;
-        top: 15px;
+        top: 5px;
         left: 20px;
     }
     .layout-nav{
         width: 420px;
         margin: 0 auto;
-        margin-right: 20px;
+        margin-right: 0;
     }
     .index-menu{
         font-size: 16px;
@@ -30,26 +30,29 @@
 </style>
 <template>
     <div class="layout">
-        <Layout  >
+        <Layout>
             <Header :style="{position: 'fixed', width: '100vw', top: 0, overflow: 'auto'}" style="z-index: 100">
                 <Menu mode="horizontal" theme="dark" active-name="1" >
-                    <div class="layout-logo"></div>
+                    <!--<div><img src="../image/logo.jpg" /></div>-->
+                    <div class="layout-logo" style="background: transparent">
+                        <img src="../image/logo.jpg" alt="" height="50" width="50" >
+                    </div>
                     <div class="layout-nav">
                         <MenuItem name="pageHome" @click.native="route('/pageHome')" >
                             <Icon type="home"></Icon>
                             首页
                         </MenuItem>
-                        <MenuItem name="2">
-                            <Icon type="ios-keypad"></Icon>
-                            Item 2
+                        <MenuItem name="person">
+                            <Icon type="person"></Icon>
+                            用户
                         </MenuItem>
-                        <MenuItem name="3">
-                            <Icon type="ios-analytics"></Icon>
-                            Item 3
+                        <MenuItem name="edit" @click.native="showModel = true" >
+                            <Icon type="edit"></Icon>
+                            修改密码
                         </MenuItem>
-                        <MenuItem name="4">
-                            <Icon type="ios-paper"></Icon>
-                            Item 4
+                        <MenuItem name="exit" @click.native="route('/login')" >
+                            <Icon type="power"></Icon>
+                            退出
                         </MenuItem>
                     </div>
                 </Menu>
@@ -65,10 +68,6 @@
                             <MenuItem name="pageHome" class="index-menu">
                                 <Icon type="home"></Icon>
                                 主页</MenuItem>
-                            <!--<MenuItem name="personalInformation" class="index-menu">-->
-                                <!--<Icon type="person"></Icon>-->
-                                <!--个人资料</MenuItem>-->
-
                         </Submenu>
                         <Submenu name="2" >
                             <template slot="title">
@@ -116,13 +115,34 @@
                 </Layout>
             </Layout>
         </Layout>
+        <Modal
+                v-model="showModel"
+                title="修改"
+                :mask-closable="false"
+                @on-ok="change"
+                @on-cancel="changeCancel"
+              >
+            <Form :model="infoModel" :label-width="80" >
+                <FormItem label="密码" prop="password">
+                    <Input v-model="infoModel.password" placeholder="请输入密码" type="password" />
+                </FormItem>
+                <FormItem label="重复密码" prop="rePassword">
+                    <Input v-model="infoModel.rePassword" placeholder="请再次输入密码" type="password" />
+                </FormItem>
+            </Form>
+        </Modal>
     </div>
 </template>
 <script>
     export default {
         data(){
             return{
-                oneName:""
+                oneName:"",
+                showModel:false,
+                infoModel: {
+                    password: '',
+                    rePassword:''
+                }
             }
         },
         methods:{
@@ -135,6 +155,16 @@
                 this.$router.push(e);
                 this.oneName=this.routeName
             },
+            change(){
+                let self = this
+                self.$Message.success('修改成功！！');
+                self.showModel=false
+            },
+            changeCancel(){
+                let self = this
+                self.$Message.error('取消修改！！');
+                self.showModel=false
+            }
         }
 
     }

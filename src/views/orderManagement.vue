@@ -156,9 +156,9 @@
                         title: '创建时间',
                         key: 'updateTime',
                         align:'center',
-                        render: (h,params)=>{
-                            return this.allStatus[params.row.status]
-                        }
+                        // render: (h,params)=>{
+                        //     return this.allStatus[params.row.status]
+                        // }
                     },
                     {
                         title: '操作',

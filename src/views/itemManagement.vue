@@ -83,7 +83,7 @@
                             >
                         <Row>
                             <Col span="12">
-                                    <Select v-model="item.id" filterable >
+                                    <Select v-model="item.componentId" filterable >
                                         <Option v-for="cp in componentsList" :value="cp.id"  :key="cp.id">{{ cp.name }}</Option>
                                     </Select>
                             </Col>
@@ -375,14 +375,13 @@
                 let self =this
                 console.log(self.formDynamic.items)
                 console.log(self.formDynamic.itemId)
-                // self.$http.post(this.URL+'/',self.formDynamic).then(response => {
-                //     self.showChangeModel=false;
-                //     self.$Message.success('修改成功！！');
-                //     self.selectData();
-                // }, response => {
-                //     // error callback
-                // });
-
+                self.$http.post(this.URL+'/goods/'+self.formDynamic.itemId+'/components',self.formDynamic.items).then(response => {
+                    self.showConfigureModel=false;
+                    self.$Message.success('配置成功！！');
+                    self.selectData();
+                }, response => {
+                    // error callback
+                });
             },
             handleAdd () {
                 this.formDynamic.items.push({
