@@ -29,9 +29,17 @@ Vue.prototype.URL=URL.url
 const router = new VueRouter(RouterConfig);
 router.beforeEach((to, from, next) => {
     iView.LoadingBar.start();
-    Vue.prototype.routeName=to.meta.title
-    Util.title(to.meta.title);
-    next();
+    if (to.path == '/login') {
+        sessionStorage.removeItem('userInfo');
+    }
+    let user = JSON.parse(sessionStorage.getItem('userInfo'));
+    if (!user && to.path != '/login') {
+        next({ path: '/login' })
+    } else {
+        Vue.prototype.routeName=to.meta.title
+        Util.title(to.meta.title);
+        next();
+    }
 });
 
 router.afterEach((to, from, next) => {

@@ -233,7 +233,7 @@
                     "size":self.currentPage,
                     "type":self.orderType
                 }
-                this.$http.get('http://localhost:8689/components',{params:postData}).then(response => {
+                this.$http.get(this.URL+'/components',{params:postData}).then(response => {
                     self.model=response.body.content
                     self.count=response.body.totalElements
                     console.log(self.model)
@@ -263,7 +263,7 @@
                             price:self.addModel.price,
                             type:self.addModel.type
                         }
-                        self.$http.post('http://localhost:8689/components',sendData).then(response => {
+                        self.$http.post(this.URL+'/components',sendData).then(response => {
                             self.showAddModel=false;
                             self.$Message.success('新增成功！！');
                             self.selectData();
@@ -290,7 +290,7 @@
                 let self=this;
                 this.$refs['changeModel'].validate((valid) => {
                     if (valid) {
-                        self.$http.post('http://localhost:8689/components',self.changeModel).then(response => {
+                        self.$http.post(this.URL+'/components',self.changeModel).then(response => {
                             self.showChangeModel=false;
                             self.$Message.success('修改成功！！');
                             self.selectData();
@@ -311,7 +311,7 @@
             },
             del(){
                 var self=this
-                this.$http.delete('http://localhost:8689/components/'+ this.deleteModel)
+                this.$http.delete(this.URL+'/components/'+ this.deleteModel)
                     .then(response => {
                         self.showDeleteModel=false
                         this.$Message.success('删除成功！！');

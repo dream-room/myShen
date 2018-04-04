@@ -41,12 +41,17 @@
                 }
             }
         },
+        mounted(){
+            sessionStorage.removeItem('userInfo');
+        },
         methods: {
             handleSubmit(name) {
                 var self=this
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        this.$http.post('http://localhost:8689/login/rest',self.formInline).then(response => {
+                        this.$http.post(this.URL+'/login/rest',self.formInline).then(response => {
+                            sessionStorage.setItem('userInfo',JSON.stringify(self.formInline))
+                            console.log(sessionStorage.getItem("userInfo"))
                             this.$router.push('pageHome');
                         }, response => {
                             this.$Message.error(response.body.message);

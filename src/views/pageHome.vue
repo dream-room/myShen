@@ -21,11 +21,8 @@
                         </Col>
                 </Row>
                 <div class="line"></div>
-
                 <div id="main" style="width: 1000px;height:600px;margin:0 auto;"></div>
         </div>
-
-
 </template>
 <script>
     import {getToday} from '../Tools/timeMethod'
@@ -133,15 +130,8 @@
                     ]
                 };
                 myChart.setOption(option);
-
             }
-
-
-
         }
-
-
-
     }
 
 </script>

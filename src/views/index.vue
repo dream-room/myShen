@@ -8,16 +8,16 @@
         border-radius: 4px;
         overflow: hidden;
     }
-    .layout-logo{
-        width: 100px;
-        height: 40px;
-        /*background: #5b6270;*/
-        border-radius: 3px;
-        float: left;
-        position: relative;
-        top: 5px;
-        left: 20px;
-    }
+    /*.layout-logo{*/
+        /*width: 100px;*/
+        /*height: 40px;*/
+        /*!*background: #5b6270;*!*/
+        /*border-radius: 3px;*/
+        /*float: left;*/
+        /*position: relative;*/
+        /*top: 5px;*/
+        /*left: 20px;*/
+    /*}*/
     .layout-nav{
         width: 420px;
         margin: 0 auto;
@@ -31,12 +31,9 @@
 <template>
     <div class="layout">
         <Layout>
-            <Header :style="{position: 'fixed', width: '100vw', top: 0, overflow: 'auto'}" style="z-index: 100">
-                <Menu mode="horizontal" theme="dark" active-name="1" >
+            <div style="z-index: 999;position: fixed;top:0;width: 100vw">
+                <Menu mode="horizontal" theme="light" active-name="1"  style="height: 70px;">
                     <!--<div><img src="../image/logo.jpg" /></div>-->
-                    <div class="layout-logo" style="background: transparent">
-                        <img src="../image/logo.jpg" alt="" height="50" width="50" >
-                    </div>
                     <div class="layout-nav">
                         <MenuItem name="pageHome" @click.native="route('/pageHome')" >
                             <Icon type="home"></Icon>
@@ -44,7 +41,7 @@
                         </MenuItem>
                         <MenuItem name="person">
                             <Icon type="person"></Icon>
-                            用户
+                            {{userName}}
                         </MenuItem>
                         <MenuItem name="edit" @click.native="showModel = true" >
                             <Icon type="edit"></Icon>
@@ -56,9 +53,9 @@
                         </MenuItem>
                     </div>
                 </Menu>
-            </Header>
+            </div>
             <Layout>
-                <Sider hide-trigger  :style="{position: 'fixed', height: '100vh', left: 0, overflow: 'auto',background: '#fff'}" style="top: 60px;">
+                <Sider hide-trigger  :style="{position: 'fixed', height: '100vh', left: 0, overflow: 'auto',background: '#fff'}" style="top: 70px;">
                     <Menu active-name="1-2" theme="light" width="auto" :open-names="['1']" @on-select="routerTo"  accordion style="font-size: 18px">
                         <Submenu name="1" >
                             <template slot="title">
@@ -100,12 +97,6 @@
                     </Menu>
                 </Sider>
                 <Layout :style="{padding: '70px 1px 1px 1px',marginLeft: '200px',minHeight:'100vh',}" >
-                    <!--<Breadcrumb :style="{margin: '24px 0'}" >-->
-                        <!--<BreadcrumbItem >首页</BreadcrumbItem>-->
-                        <!--<BreadcrumbItem>{{oneName}}</BreadcrumbItem>-->
-                        <!--&lt;!&ndash;<BreadcrumbItem>Components</BreadcrumbItem>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<BreadcrumbItem>Layout</BreadcrumbItem>&ndash;&gt;-->
-                    <!--</Breadcrumb>-->
                     <Content :style="{padding: '24px 24px 0 24px', minHeight: '280px', background: '#fff',maxHeight:'100vh'}">
                         <router-view></router-view>
                     </Content>
@@ -142,8 +133,13 @@
                 infoModel: {
                     password: '',
                     rePassword:''
-                }
+                },
+                userName:''
             }
+        },
+        mounted(){
+            let user = JSON.parse(sessionStorage.getItem('userInfo'));
+            this.userName=user.no
         },
         methods:{
             routerTo(e){
