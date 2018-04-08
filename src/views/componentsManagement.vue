@@ -34,6 +34,7 @@
             <Modal
                     v-model="showAddModel"
                     :mask-closable="false"
+                    width="600px"
                     title="新增零件">
                 <Form  ref="addModel" :model="addModel" :label-width="80" :rules="addRuleInline" >
                     <FormItem label="名称" prop="name">

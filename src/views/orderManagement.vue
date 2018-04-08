@@ -8,35 +8,29 @@
                     <Input type="text" v-model="selectModel.no" placeholder="输入订单编号" clearable style="width: 200px;" >
                     </Input>
                 </FormItem>
-                <!--<FormItem>-->
-                    <!--<label style="font-size: 20px;vertical-align: middle">订单名称：</label>-->
-                    <!--<Input type="text" v-model="selectModel.name" placeholder="" clearable style="width: 200px;" >-->
-                    <!--</Input>-->
-                <!--</FormItem>-->
                 <FormItem>
-                    <label style="font-size: 20px;vertical-align: middle">下单公司：</label>
+                    <label style="font-size: 20px;vertical-align: middle">订单公司：</label>
                     <Input type="text" v-model="selectModel.name" placeholder="输入下单公司名称" clearable style="width: 200px" >
                     </Input>
                 </FormItem>
                 <FormItem>
-                    <label style="font-size: 20px;vertical-align: middle">下单时间：</label>
-                    <DatePicker type="date" placeholder="选择下单时间" style="width: 200px"></DatePicker>
+                    <label style="font-size: 20px;vertical-align: middle">订单时间：</label>
+                    <DatePicker type="daterange" placeholder="选择下单时间段" style="width: 200px" v-model="selectModel.createTime"></DatePicker>
                     </Input>
                 </FormItem>
                 <FormItem  style="float: right">
                     <Button type="success" @click="addOne" size="large">新增</Button>
                     <Button type="primary" @click="selectData" size="large">搜索</Button>
                 </FormItem>
-
                 <!--</Row>-->
             </Form>
         </div>
         <div>
             <RadioGroup v-model="orderType" type="button" @on-change="selectDataByType" size="large">
-                <Radio label="1">已生成</Radio>
+                <Radio label="1">编辑中</Radio>
                 <Radio label="2">进行中</Radio>
                 <Radio label="3">已完成</Radio>
-                <Radio label="4">已作废</Radio>
+                <Radio label="4">已取消</Radio>
             </RadioGroup>
             <Table stripe :columns="searcherColumns" :data="model" border no-data-text="你好像还没有添加数据哦！" width="100%" style="margin-top: 10px" size="large"></Table>
             <div style="margin: 10px">
@@ -51,21 +45,18 @@
                     v-model="showAddModel"
                     width="600"
                     title="新增订单">
-                <Form  ref="addModel" :model="addModel" :label-width="100" :rules="addRuleInline" >
-                    <FormItem label="订单编号" prop="name">
-                        <Input v-model="addModel.name" placeholder="请输入编号" />
+                <Form  ref="addModel" :model="addModel" :label-width="100" :rules="addRuleInline"  >
+                    <FormItem label="订单编号" prop="no" >
+                        <Input v-model="addModel.no" placeholder="请输入编号" />
                     </FormItem>
-                    <FormItem label="订单名称" prop="price">
-                        <Input v-model="addModel.price" placeholder="请输入名称" />
+                    <FormItem label="订单名称" prop="name">
+                        <Input v-model="addModel.name" placeholder="请输入名称" />
                     </FormItem>
-                    <FormItem label="订单公司" prop="price">
-                        <Input v-model="addModel.price" placeholder="请输入名称" />
+                    <FormItem label="订单公司" prop="company">
+                        <Input v-model="addModel.company" placeholder="请输入名称" />
                     </FormItem>
-                    <FormItem label="订单时间" prop="num">
-                        <DatePicker type="date" placeholder="选择订单时间" style="width: 468px"></DatePicker>
-                    </FormItem>
-                    <FormItem label="最后交货日期" prop="num">
-                        <DatePicker type="date" placeholder="选择最后交货日期"  style="width: 468px"></DatePicker>
+                    <FormItem label="计划交货日期" prop="lastExpectedTime">
+                        <DatePicker v-model="addModel.lastExpectedTime" type="date" placeholder="选择最后交货日期"  style="width: 468px"></DatePicker>
                     </FormItem>
                 </Form>
                 <div slot="footer">
@@ -77,21 +68,18 @@
                     v-model="showChangeModel"
                     width="600"
                     title="修改订单">
-                <Form  ref="addModel" :model="changeModel" :label-width="100" :rules="addRuleInline" >
-                    <FormItem label="订单编号" prop="name">
-                        <Input v-model="changeModel.name" placeholder="请输入编号" />
+                <Form  ref="changeModel" :model="changeModel" :label-width="100" :rules="addRuleInline"  >
+                    <FormItem label="订单编号" prop="no">
+                        <Input v-model="changeModel.no" placeholder="请输入编号" />
                     </FormItem>
-                    <FormItem label="订单名称" prop="price">
-                        <Input v-model="changeModel.price" placeholder="请输入名称" />
+                    <FormItem label="订单名称" prop="name">
+                        <Input v-model="changeModel.name" placeholder="请输入名称" />
                     </FormItem>
-                    <FormItem label="订单公司" prop="price">
-                        <Input v-model="changeModel.price" placeholder="请输入名称" />
+                    <FormItem label="订单公司" prop="company">
+                        <Input v-model="changeModel.company" placeholder="请输入名称" />
                     </FormItem>
-                    <FormItem label="订单时间" prop="num">
-                        <DatePicker type="date" placeholder="选择订单时间" style="width: 468px"></DatePicker>
-                    </FormItem>
-                    <FormItem label="最后交货日期" prop="num">
-                        <DatePicker type="date" placeholder="选择最后交货日期"  style="width: 468px"></DatePicker>
+                    <FormItem label="计划交货日期" prop="lastExpectedTime">
+                        <DatePicker  v-model="changeModel.lastExpectedTime" type="date" placeholder="选择最后交货日期"  style="width: 468px"></DatePicker>
                     </FormItem>
                 </Form>
                 <div slot="footer">
@@ -114,17 +102,18 @@
             </Modal>
         </div>
     </div>
-
-
 </template>
 <script>
+    import {getTime} from '../Tools/timeMethod'
     export default{
         data(){
             return{
                 selectModel: {
                     no: "",
-                    name:""
+                    name:"",
+                    createTime:""
                 },
+                allStatus:{"1":"编辑中","2":"进行中","3":"已完成","4":"已取消"},
                 orderType:'1',
                 count:0,//总数
                 current: 1,//页码
@@ -148,17 +137,33 @@
                         align:'center'
                     },
                     {
-                        title: '状态',
-                        key: 'num',
+                        title: '下单公司',
+                        key: 'company',
                         align:'center'
                     },
                     {
-                        title: '创建时间',
-                        key: 'updateTime',
+                        title: '计划交货日期',
+                        key: 'lastExpectedTime',
                         align:'center',
-                        // render: (h,params)=>{
-                        //     return this.allStatus[params.row.status]
-                        // }
+                        render: (h,params)=>{
+                            return getTime[params.row.lastExpectedTime]
+                        }
+                    },
+                    {
+                        title: '状态',
+                        key: 'num',
+                        align:'center',
+                        render: (h,params)=>{
+                            return this.allStatus[params.row.status]
+                        }
+                    },
+                    {
+                        title: '创建时间',
+                        key: 'createTime',
+                        align:'center',
+                        render: (h,params)=>{
+                            return getTime(params.row.createTime)
+                        }
                     },
                     {
                         title: '操作',
@@ -182,7 +187,7 @@
                                 }, '修改'),
                                 h('Button', {
                                     props: {
-                                        type: 'warning',
+                                        type: 'info',
                                         size: 'default'
                                     },
                                     style: {
@@ -191,7 +196,7 @@
                                     },
                                     on: {
                                         click: () => {
-                                            this.changeOne(params.row)
+                                            this.configureOne(params.row)
                                         }
                                     }
                                 }, '配置'),
@@ -212,30 +217,34 @@
                 ],
                 showAddModel:false,
                 addModel:{
+                    no:'',
                     name:'',
-                    num:'',
-                    price:''
+                    lastExpectedTime:'',
+                    company:''
                 },
                 addRuleInline:{
+                    no: [
+                        { required: true, message: '编号不能为空', trigger: 'blur' }
+                    ],
                     name: [
-                        { required: true, message: '名称不能为空', trigger: 'blur' }
+                        { required: true, message: '公司不能为空', trigger: 'blur' }
                     ],
-                    num: [
-                        { required: true, message: '数量不能为空', trigger: 'blur' }
+                    company: [
+                        { required: true, message: '公司不能为空', trigger: 'blur' }
                     ],
-                    price: [
-                        { required: true, message: '价格不能为空', trigger: 'blur' }
-                    ],
+                    lastExpectedTime: [
+                        { required: true, type: 'date', message: '日期不能为空', trigger: 'change' }
+                    ]
                 },
                 showChangeModel:false,
                 changeModel:{
                     name:'',
-                    num:'',
-                    price:''
+                    no:'',
+                    lastExpectedTime:'',
+                    company:''
                 },
                 showDeleteModel:false,
                 deleteModel:''
-
             }
         },
         mounted () {
@@ -249,19 +258,21 @@
                     "page": self.current-1,
                     "size":self.currentPage,
                     'no': self.selectModel.no,
-                    'name':self.selectModel.name
+                    'name':self.selectModel.name,
+                    'status':self.orderType
+                    // 'createTime':self.selectModel.createTime
                 }
-                this.$http.get(this.URL+'/components',{params:postData}).then(response => {
+                this.$http.get(this.URL+'/bills',{params:postData}).then(response => {
                     self.model=response.body.content
                     self.count=response.body.totalElements
                     console.log(self.model)
                 }, response => {
                     // error callback
                 });
-
             },
             selectDataByType(){
                 console.log(this.orderType)
+                this.selectData()
             },
             getOnePage(page){
                 let self=this;
@@ -271,7 +282,7 @@
             //新增
             addOne(){
                 this.$refs['addModel'].resetFields();
-                this.addModel=[];
+                this.addModel={};
                 this.showAddModel=true;
             },
             add(){
@@ -280,10 +291,11 @@
                     if (valid) {
                         let sendData={
                             name:self.addModel.name,
-                            num:self.addModel.num,
-                            price:self.addModel.price
+                            no:self.addModel.no,
+                            lastExpectedTime:self.addModel.lastExpectedTime,
+                            company:self.addModel.company
                         }
-                        self.$http.post('http://localhost:8689/components',sendData).then(response => {
+                        self.$http.post(this.URL+'/bills',sendData).then(response => {
                             self.showAddModel=false;
                             self.$Message.success('新增成功！！');
                             self.selectData();
@@ -300,15 +312,13 @@
                 var self=this
                 this.$refs['changeModel'].resetFields();
                 self.changeModel = JSON.parse(JSON.stringify(data))
-                self.changeModel.num=data.num.toString()
-                self.changeModel.price=data.price.toString()
                 self.showChangeModel=true;
             },
             change(){
                 let self=this;
                 this.$refs['changeModel'].validate((valid) => {
                     if (valid) {
-                        self.$http.post(URL+'/components',self.changeModel).then(response => {
+                        self.$http.post(this.URL+'/bills',self.changeModel).then(response => {
                             self.showChangeModel=false;
                             self.$Message.success('修改成功！！');
                             self.selectData();
@@ -319,9 +329,12 @@
                         this.$Message.error('请按照要求填写数据!');
                     }
                 })
-
             },
-            //删除
+            //配置
+            configureOne(data){
+                let self =this;
+            },
+            //作废
             deleteOne(data){
                 var self= this
                 self.deleteModel = JSON.parse(JSON.stringify(data.id))
@@ -329,7 +342,7 @@
             },
             del(){
                 var self=this
-                this.$http.delete('http://localhost:8689/components/'+ this.deleteModel)
+                this.$http.delete(this.URL+'/components/'+ this.deleteModel)
                     .then(response => {
                         self.showDeleteModel=false
                         this.$Message.success('删除成功！！');
@@ -338,9 +351,9 @@
                         // error callback
                         this.$Message.warning(response.body.message);
                     });
-            },
-
+            }
         }
-
     }
 </script>
+<style>
+</style>

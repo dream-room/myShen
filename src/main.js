@@ -30,17 +30,37 @@ const router = new VueRouter(RouterConfig);
 router.beforeEach((to, from, next) => {
     iView.LoadingBar.start();
     if (to.path == '/login') {
-        sessionStorage.removeItem('userInfo');
+        sessionStorage.removeItem('tokens');
     }
-    let user = JSON.parse(sessionStorage.getItem('userInfo'));
-    if (!user && to.path != '/login') {
+    let token = sessionStorage.getItem('tokens');
+    if ((token=='undefined' && to.path != '/login') || (token==null && to.path != '/login')) {
         next({ path: '/login' })
     } else {
-        Vue.prototype.routeName=to.meta.title
         Util.title(to.meta.title);
-        next();
+        Vue.prototype.routeName=to.meta.title
+        next()
     }
 });
+
+Vue.http.interceptors.push((request, next) => {
+    // ...
+    // 请求发送前的处理逻辑
+    // ...
+    // modify method
+    // request.method = 'POST';
+    //
+    // modify headers
+    // request.headers.set('X-CSRF-TOKEN', 'TOKEN');
+    let token = sessionStorage.getItem('tokens');
+    request.headers.set('Authorization', token);
+    next((response) => {
+        // ...
+        // 请求发送后的处理逻辑
+        // ...
+        // 根据请求的状态，response参数会返回给successCallback或errorCallback
+        return response
+    })
+})
 
 router.afterEach((to, from, next) => {
     iView.LoadingBar.finish();
