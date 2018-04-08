@@ -101,8 +101,6 @@
             </Modal>
         </div>
     </div>
-
-
 </template>
 <script>
     import {getTime} from '../Tools/timeMethod'
@@ -241,7 +239,6 @@
                 }, response => {
                     // error callback
                 });
-
             },
             getOnePage(page){
                 let self=this;
@@ -322,8 +319,6 @@
                         this.$Message.warning(response.body.message);
                     });
             },
-
         }
-
     }
 </script>
