@@ -100,6 +100,48 @@
                     <Button type="error" size="large" long  @click="del">确认</Button>
                 </div>
             </Modal>
+            <!--配置-->
+            <Modal
+                    v-model="showConfigureModel"
+                    width="800"
+                    :mask-closable="false"
+                    title="配置零件">
+                <Form  ref="configureModel" :model="configureModel" :label-width="80"  >
+                    <FormItem
+                            v-for="(item, index) in configureModel.items"
+                            :key="index"
+                            :label="'零件 '+(index+1)"
+                            :prop="'items.' + index + '.id'+'.num'"
+                    >
+                        <Row>
+                            <Col span="12">
+                                <Select v-model="item.componentId" filterable >
+                                    <Option v-for="cp in componentsList" :value="cp.id"  :key="cp.id">{{ cp.name }}</Option>
+                                </Select>
+                            </Col>
+                            <Col span="2" offset="1">
+                                <label>数量：</label>
+                            </Col>
+                            <Col span="5" >
+                                <Input type="text" v-model="item.num" placeholder="输入数量"></Input>
+                            </Col>
+                            <Col span="3" offset="1">
+                                <Button type="ghost" @click="handleRemove(index)">删除</Button>
+                            </Col>
+                        </Row>
+                    </FormItem>
+                    <FormItem>
+                        <Row>
+                            <Col span="12">
+                                <Button type="dashed" long @click="handleAdd" icon="plus-round">新增</Button>
+                            </Col>
+                        </Row>
+                    </FormItem>
+                </Form>
+                <div slot="footer">
+                    <Button type="primary" @click="configure()" size="large">配置</Button>
+                </div>
+            </Modal>
         </div>
     </div>
 </template>
@@ -244,7 +286,8 @@
                     company:''
                 },
                 showDeleteModel:false,
-                deleteModel:''
+                deleteModel:'',
+                configureModel:{}
             }
         },
         mounted () {
@@ -333,6 +376,10 @@
             //配置
             configureOne(data){
                 let self =this;
+                self.showConfigureModel=true;
+            },
+            configure(){
+
             },
             //作废
             deleteOne(data){
