@@ -56,7 +56,7 @@
                         <Input v-model="addModel.company" placeholder="请输入名称" />
                     </FormItem>
                     <FormItem label="计划交货日期" prop="lastExpectedTime">
-                        <DatePicker v-model="addModel.lastExpectedTime" type="date" placeholder="选择最后交货日期"  style="width: 468px"></DatePicker>
+                        <DatePicker v-model="addModel.lastExpectedTime" type="date" show-week-numbers placeholder="选择最后交货日期" style="width: 468px"></DatePicker>
                     </FormItem>
                 </Form>
                 <div slot="footer">
@@ -287,7 +287,8 @@
                 },
                 showDeleteModel:false,
                 deleteModel:'',
-                configureModel:{}
+                configureModel:{},
+                showConfigureModel:false
             }
         },
         mounted () {
@@ -330,6 +331,7 @@
             },
             add(){
                 let self=this;
+                console.log(self.addModel.lastExpectedTime)
                 this.$refs['addModel'].validate((valid) => {
                     if (valid) {
                         let sendData={
@@ -376,10 +378,21 @@
             //配置
             configureOne(data){
                 let self =this;
+                console.log(data)
                 self.showConfigureModel=true;
             },
             configure(){
 
+            },
+            handleAdd () {
+                this.formDynamic.items.push({
+                    id: '',
+                    num: ''
+                });
+            },
+            handleRemove (index) {
+                this.formDynamic.items.splice(index,1)
+                console.log(this.formDynamic.items)
             },
             //作废
             deleteOne(data){
