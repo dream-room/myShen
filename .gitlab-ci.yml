@@ -16,11 +16,11 @@ release-build:
   - mkdir client
   - mv dist client/
   - mv index_prod.html client/index.html
-artifacts:
-  paths:
-    - client
-only:
-  - tags
+  artifacts:
+    paths:
+      - client
+  only:
+    - tags
 
 release-deploy:
   image: ubuntu
