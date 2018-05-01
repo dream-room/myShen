@@ -1,3 +1,3 @@
 export default {
-    url: 'http://123.206.136.162:8689'
+    url: '/bill-server'
 }
