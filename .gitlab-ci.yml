@@ -38,6 +38,7 @@ release-deploy:
     - chmod 644 ~/.ssh/known_hosts
     - ssh root@$KNOWN_HOST "rm -rf bill/client"
     - scp -r client root@$KNOWN_HOST:bill
+    - echo "成功"
 
   only:
     - tags
