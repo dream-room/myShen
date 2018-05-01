@@ -36,7 +36,7 @@ release-deploy:
 
     - ssh-keyscan $KNOWN_HOST >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - ssh root@$KNOWN_HOST "rm -r bill/client"
+    - ssh root@$KNOWN_HOST "rm -rf bill/client"
     - scp -r client root@$KNOWN_HOST:bill
 
   only:
