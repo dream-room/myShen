@@ -1,6 +1,52 @@
-image: node:8.9.1
+stages:
+  - build
+  - deploy
+  - gitlab-pages
+
+release-build:
+  image: node:8.9.1
+  stage: build
+  script:
+  # install dependencies
+  - npm install
+
+  # build
+  - npm run build
+  # mv
+  - mkdir client
+  - mv dist client/
+  - mv index_prod.html client/index.html
+  artifacts:
+    paths:
+      - client
+  only:
+    - tags
+
+release-deploy:
+  image: ubuntu
+  stage: deploy
+  script:
+
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
+
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+
+    - ssh-keyscan $KNOWN_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ssh root@$KNOWN_HOST "rm -rf bill/client"
+    - scp -r client root@$KNOWN_HOST:bill
+    - echo "成功"
+
+  only:
+    - tags
+
 
 pages:
+  image: node:8.9.1
+  stage: gitlab-pages
   cache:
     paths:
     - node_modules/
