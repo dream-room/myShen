@@ -51,6 +51,7 @@ Vue.http.interceptors.push((request, next) => {
     //
     // modify headers
     // request.headers.set('X-CSRF-TOKEN', 'TOKEN');
+    // iView.Spin.show();
     let token = sessionStorage.getItem('tokens');
     request.headers.set('Authorization', token);
     next((response) => {
@@ -58,6 +59,7 @@ Vue.http.interceptors.push((request, next) => {
         // 请求发送后的处理逻辑
         // ...
         // 根据请求的状态，response参数会返回给successCallback或errorCallback
+        // iView.Spin.hide();
         return response
     })
 })
