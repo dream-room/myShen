@@ -115,6 +115,7 @@
     </div>
 </template>
 <script>
+    import { checkNull,checkNumber }  from '../Tools/checkMethod'
     export default {
         data(){
             return{
@@ -143,8 +144,26 @@
             },
             change(){
                 let self = this
-                self.$Message.success('修改成功！！');
-                self.showModel=false
+                if(checkNull([this.infoModel.password,this.infoModel.rePassword]).isNull)
+                {
+                    this.$Message.error('请输入密码！！');
+                    return
+                }
+                if(self.infoModel.password != self.infoModel.rePassword)
+                {
+                    this.$Message.error('两次密码输入不一致！！');
+                    return
+                }
+                let postData={
+                    "no":self.userName,
+                    "password":self.infoModel.password
+                }
+                this.$http.put(this.URL+'/users/password',postData).then(response => {
+                    self.showModel=false
+                    this.$Message.success('修改成功！！');
+                }, response => {
+                    this.$Message.error('修改失败！！');
+                });
             },
             changeCancel(){
                 let self = this
