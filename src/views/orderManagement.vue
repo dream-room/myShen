@@ -15,7 +15,7 @@
                 </FormItem>
                 <FormItem>
                     <label style="font-size: 20px;vertical-align: middle">订单时间：</label>
-                    <DatePicker type="daterange" placeholder="选择下单时间段" style="width: 200px" v-model="selectModel.createTime"></DatePicker>
+                    <DatePicker type="daterange" placeholder="选择下单时间段" style="width: 200px" @on-change="selectModel.createTime=$event" :value="selectModel.createTime"></DatePicker>
                     </Input>
                 </FormItem>
                 <FormItem  style="float: right">
@@ -56,7 +56,7 @@
                         <Input v-model="addModel.company" placeholder="请输入名称" />
                     </FormItem>
                     <FormItem label="计划交货日期" prop="lastExpectedTime">
-                        <DatePicker v-model="addModel.lastExpectedTime" type="date" show-week-numbers placeholder="选择最后交货日期" style="width: 468px"></DatePicker>
+                        <DatePicker v-model="addModel.lastExpectedTime"  type="date" show-week-numbers placeholder="选择最后交货日期" style="width: 468px"></DatePicker>
                     </FormItem>
                 </Form>
                 <div slot="footer">
@@ -79,7 +79,7 @@
                         <Input v-model="changeModel.company" placeholder="请输入名称" />
                     </FormItem>
                     <FormItem label="计划交货日期" prop="lastExpectedTime">
-                        <DatePicker  v-model="changeModel.lastExpectedTime" type="date" placeholder="选择最后交货日期"  style="width: 468px"></DatePicker>
+                        <DatePicker  v-model="changeModel.lastExpectedTime" type="date"  placeholder="选择最后交货日期"  style="width: 468px"></DatePicker>
                     </FormItem>
                 </Form>
                 <div slot="footer">
@@ -105,7 +105,7 @@
                     v-model="showConfigureModel"
                     width="800"
                     :mask-closable="false"
-                    title="配置零件">
+                    title="配置物品">
                 <Form  ref="configureModel" :model="configureModel" :label-width="80"  >
                     <FormItem
                             v-for="(item, index) in configureModel.items"
@@ -298,6 +298,7 @@
             //搜索
             selectData(){
                 let self=this
+                console.log('搜索时间'+this.selectModel.createTime)
                 let postData= {
                     "page": self.current-1,
                     "size":self.currentPage,
@@ -340,7 +341,9 @@
                             lastExpectedTime:self.addModel.lastExpectedTime,
                             company:self.addModel.company
                         }
+
                         self.$http.post(this.URL+'/bills',sendData).then(response => {
+                            debugger
                             self.showAddModel=false;
                             self.$Message.success('新增成功！！');
                             self.selectData();
